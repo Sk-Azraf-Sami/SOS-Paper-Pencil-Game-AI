@@ -30,38 +30,46 @@ def pvp(mySurface, n):
                     j = (x - 70) // 70
                     i = (y - 70) // 70
                     if board[i][j] == 0:
-                        board[i][j] = 1 if event.button == 1 else 2
-                        score, lines = calculateScore(board, n, i, j)
-                        scores[currentPlayer - 1] += score
+                        board[i][j] = currentPlayer
                         gui.drawCell(mySurface, board, i, j, currentPlayer)
-                        gui.displayScore(mySurface, scores)
-                        gui.drawLines(mySurface, lines, currentPlayer)
-                        if score == 0:
-                            currentPlayer = 3 - currentPlayer
+                        lines = checkForSOS(board, i, j)
+                        if lines:
+                            scores[currentPlayer - 1] += len(lines)
+                            gui.displayScore(mySurface, scores)
+                            gui.drawLines(mySurface, lines, currentPlayer)
+                        currentPlayer = 3 - currentPlayer  # Toggle player
                         gui.displayPlayer(mySurface, currentPlayer)
-        pygame.display.update()
-    pygame.quit()
+            if event.type == QUIT:
+                return
 
-def calculateScore(board, n, row, col):
-    totalScore = 0
+def checkForSOS(board, row, col):
+    n = len(board)
     lines = []
-    for drow in [-1, 0, 1]:
-        for dcol in [-1, 0, 1]:
-            if drow == 0 and dcol == 0:
-                continue
-            s = countS(board, n, row, col, drow, dcol)
-            if s == 3:
-                totalScore += 1
-                lines.append((row, col, row + 2 * drow, col + 2 * dcol))
-    return totalScore, lines
 
-def countS(board, n, row, col, drow, dcol):
-    s = 0
-    for k in range(3):
-        r = row + k * drow
-        c = col + k * dcol
-        if 0 <= r < n and 0 <= c < n:
-            s += 1 if board[r][c] == 1 else 2 if board[r][c] == 2 else 0
-        else:
-            return 0
-    return s
+    # Horizontal SOS
+    if col - 2 >= 0 and board[row][col] == 'S' and board[row][col - 1] == 'O' and board[row][col - 2] == 'S':
+        lines.append((row, col - 2, row, col))
+    if col + 2 < n and board[row][col] == 'S' and board[row][col + 1] == 'O' and board[row][col + 2] == 'S':
+        lines.append((row, col, row, col + 2))
+    if col - 1 >= 0 and col + 1 < n and board[row][col - 1] == 'S' and board[row][col] == 'O' and board[row][col + 1] == 'S':
+        lines.append((row, col - 1, row, col + 1))
+
+    # Vertical SOS
+    if row - 2 >= 0 and board[row][col] == 'S' and board[row - 1][col] == 'O' and board[row - 2][col] == 'S':
+        lines.append((row - 2, col, row, col))
+    if row + 2 < n and board[row][col] == 'S' and board[row + 1][col] == 'O' and board[row + 2][col] == 'S':
+        lines.append((row, col, row + 2, col))
+    if row - 1 >= 0 and row + 1 < n and board[row - 1][col] == 'S' and board[row][col] == 'O' and board[row + 1][col] == 'S':
+        lines.append((row - 1, col, row + 1, col))
+
+    # Diagonal SOS
+    if row - 2 >= 0 and col - 2 >= 0 and board[row][col] == 'S' and board[row - 1][col - 1] == 'O' and board[row - 2][col - 2] == 'S':
+        lines.append((row - 2, col - 2, row, col))
+    if row + 2 < n and col + 2 < n and board[row][col] == 'S' and board[row + 1][col + 1] == 'O' and board[row + 2][col + 2] == 'S':
+        lines.append((row, col, row + 2, col + 2))
+    if row - 2 >= 0 and col + 2 < n and board[row][col] == 'S' and board[row - 1][col + 1] == 'O' and board[row - 2][col + 2] == 'S':
+        lines.append((row - 2, col + 2, row, col))
+    if row + 2 < n and col - 2 >= 0 and board[row][col] == 'S' and board[row + 1][col - 1] == 'O' and board[row + 2][col - 2] == 'S':
+        lines.append((row, col, row + 2, col - 2))
+
+    return lines

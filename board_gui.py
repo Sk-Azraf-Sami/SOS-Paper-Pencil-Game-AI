@@ -94,11 +94,10 @@ def displayPlayer(mySurface, player):
         mySurface.blit(player2onText, textRect)
 
 def drawCell(mySurface, board, i, j, player):
-    letter = ''
-    clearCell(mySurface, board, i, j)
-    x = 71 + (j * 70) + (18 if board[i][j] == 1 else 22)
-    y = 71 + (i * 70) + 12
     letter = 'S' if board[i][j] == 1 else 'O'
+    clearCell(mySurface, board, i, j)
+    x = 71 + (j * 70) + 18
+    y = 71 + (i * 70) + 12
     text = cellFont.render(letter, True, BLUE if player == 1 else RED)
     textRect = text.get_rect()
     textRect.topleft = (x, y)
