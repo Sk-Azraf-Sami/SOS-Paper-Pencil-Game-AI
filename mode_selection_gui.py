@@ -1,56 +1,31 @@
+#!/usr/bin/python3
 import pygame
 from pygame.locals import *
-from main import gameloop
-
-# Colors
-GREY = (70, 70, 70)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-ORANGE = (255, 140, 0)
-YELLOW = (255, 100, 0)
-
-# Resolution
-heigth = 600
-width = 900
-
-# Fonts and Text
-pygame.init()
-logoFont = pygame.font.Font('font/solid.ttf', 100)
-sbuttonFont = pygame.font.Font('font/solid.ttf', 50)
-mbuttonFont = pygame.font.Font('font/solid.ttf', 20)
-
-logoText = logoFont.render('S O S', True, BLACK)
-sbuttonText = sbuttonFont.render('SOLO', True, BLACK)
-sbuttonhoverText = sbuttonFont.render('SOLO', True, ORANGE)
-mbuttonText = mbuttonFont.render('MULTIPLAYER', True, BLACK)
-mbuttonhoverText = mbuttonFont.render('MULTIPLAYER', True, ORANGE)
+from sosINIT import *
+from board_gui import gameloop
 
 def menu():
     pygame.init()
-    mySurface = pygame.display.set_mode((width, heigth))
+    mySurface = pygame.display.set_mode((width, height))
     pygame.display.set_caption('SOS')
     inProgress = True
-
-    # Define tableSize and squareSize here
-    tableSize = 6
-    squareSize = 70
 
     mySurface.fill(GREY)
     displayLogo(mySurface)
     while inProgress:
         drawButton(mySurface, BLACK, 0)
         mouse = pygame.mouse.get_pos()
-        if (380 + 150 > mouse[0] > 380 and 240 + 50 > mouse[1] > 240):
+        if ((380 + 150) > mouse[0] > 380 and (240 + 50) > mouse[1] > 240):
             drawButton(mySurface, YELLOW, 1)
-        elif (380 + 150 > mouse[0] > 380 and 310 + 50 > mouse[1] > 310):
+        elif ((380 + 150) > mouse[0] > 380 and (310 + 50) > mouse[1] > 310):
             drawButton(mySurface, YELLOW, 2)
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONDOWN:
-                if (380 + 150 > mouse[0] > 380 and 240 + 50 > mouse[1] > 240):
-                    gameloop(tableSize, squareSize, 'solo')
+                if ((380 + 150) > mouse[0] > 380 and (240 + 50) > mouse[1] > 240):
+                    gameloop(tableSize, squareSize)
                     inProgress = False
-                if (380 + 150 > mouse[0] > 380 and 310 + 50 > mouse[1] > 310):
-                    gameloop(tableSize, squareSize, 'multiplayer')
+                if ((380 + 150) > mouse[0] > 380 and (310 + 50) > mouse[1] > 310):
+                    gameloop(tableSize, squareSize)
                     inProgress = False
             if event.type == QUIT:
                 inProgress = False
