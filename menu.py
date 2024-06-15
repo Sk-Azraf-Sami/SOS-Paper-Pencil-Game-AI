@@ -4,6 +4,23 @@ from board import open_multiplayer_board  # Import the function from board.py
 
 def select_difficulty(difficulty):
     print(f"Selected difficulty: {difficulty}")
+    if difficulty == "Easy":
+        # Import and open the GUI from fuzzy_logic.py
+        from fuzzy_logic import open_fuzzy_logic_gui
+        # Now you can call the function
+        open_fuzzy_logic_gui(root, "Human", "AI")
+    # elif difficulty == "Medium":
+    #     # Import and open the GUI from genetic_algorithm.py
+    #     from genetic_algorithm import open_genetic_algorithm_gui
+    #     open_genetic_algorithm_gui()
+    # elif difficulty == "Hard":
+    #     # Import and open the GUI from a_star.py
+    #     from a_star import open_a_star_gui
+    #     open_a_star_gui()
+    # elif difficulty == "Very Hard":
+    #     # Import and open the GUI from minimax_alpha_beta.py
+    #     from minimax_alpha_beta import open_minimax_alpha_beta_gui
+    #     open_minimax_alpha_beta_gui()
 
 # Function to open the player name input window and hide the main menu
 def prompt_player_names():

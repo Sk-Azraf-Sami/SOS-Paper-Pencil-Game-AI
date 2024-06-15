@@ -1,0 +1,11 @@
+The choice of algorithm for each difficulty level in the SOS game can be subjective and depends on the complexity and efficiency of the algorithm. Here's a suggestion:
+
+1. **Easy Mode**: Fuzzy Logic - This is a simple and intuitive algorithm that can be used to make decisions based on predefined rules. It's not as precise or optimal as other algorithms, which makes it suitable for an easy difficulty level.
+
+2. **Medium Mode**: Genetic Algorithm - This is a search heuristic that is inspired by the process of natural selection. It can find solutions to optimization problems by evolving a population of individual objects over time. It's more complex and can provide better results than fuzzy logic, but it's not as efficient or optimal as A* or Minimax.
+
+3. **Hard Mode**: A* Algorithm - This is an efficient and optimal pathfinding algorithm. It's more complex and provides better results than both fuzzy logic and genetic algorithms. It's suitable for a hard difficulty level because it can make the computer player very challenging to beat.
+
+4. **Very Hard Mode**: Minimax with Alpha-Beta Pruning - This is a decision-making algorithm used in game theory and artificial intelligence. With alpha-beta pruning, the algorithm becomes more efficient by ignoring branches that cannot possibly influence the final decision. This makes it the most complex and challenging algorithm among the four, suitable for a very hard difficulty level.
+
+Remember, these are just suggestions and the actual implementation might require adjustments based on the specifics of your game.
