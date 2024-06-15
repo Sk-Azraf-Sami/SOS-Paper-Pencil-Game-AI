@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+import random
 
-def open_fuzzy_logic_gui(root, player1, player2 = "AI"):
+def open_fuzzy_logic_gui(root, player1, player2="AI"):
     # Create a new top-level window
     board_window = tk.Toplevel(root)
     board_window.title("SOS Multiplayer Board")
@@ -51,7 +52,6 @@ def open_fuzzy_logic_gui(root, player1, player2 = "AI"):
     board_size = 6
     board = [['' for _ in range(board_size)] for _ in range(board_size)]
     player_turn = [1]  # Use list to make it mutable in nested function
-
 
     def check_sos(row, col, char):
         found_sos = False
@@ -112,6 +112,43 @@ def open_fuzzy_logic_gui(root, player1, player2 = "AI"):
                     player1_name_label.config(fg="black")
                     player2_name_label.config(fg="red")
             check_game_end()
+            if player_turn[0] == 2:
+                ai_move()
+
+    def ai_move():
+        best_move = None
+        best_score = float('-inf')
+
+        # AI makes decisions based on a simple heuristic
+        for row in range(board_size):
+            for col in range(board_size):
+                if board[row][col] == '':
+                    for char in ['S', 'O']:
+                        board[row][col] = char
+                        score = evaluate_board()
+                        board[row][col] = ''
+                        if score > best_score:
+                            best_score = score
+                            best_move = (row, col, char)
+
+        if best_move:
+            row, col, char = best_move
+            board[row][col] = char
+            buttons[row][col].config(text=char, state='disabled')
+            if not check_winner(row, col, char):
+                player_turn[0] = 1
+                player1_name_label.config(fg="red")
+                player2_name_label.config(fg="black")
+            check_game_end()
+
+    def evaluate_board():
+        score = 0
+        for row in range(board_size):
+            for col in range(board_size):
+                if board[row][col] != '':
+                    if check_sos(row, col, board[row][col]):
+                        score += 1
+        return score
 
     def check_game_end():
         if all(cell != '' for row in board for cell in row):
