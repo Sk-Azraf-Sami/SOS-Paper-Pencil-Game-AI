@@ -158,6 +158,7 @@ def open_fuzzy_logic_gui(root, player1, player2="AI"):
                 winner = player2
             else:
                 winner = "No one, it's a tie!"
+            # Show the game over message before destroying the root
             messagebox.showinfo("Game Over", f"Game Over! The winner is: {winner}")
             board_window.destroy()
             root.destroy()
