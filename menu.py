@@ -9,10 +9,10 @@ def select_difficulty(difficulty):
         from fuzzy_logic import open_fuzzy_logic_gui
         # Now you can call the function
         open_fuzzy_logic_gui(root, "Human", "AI")
-    # elif difficulty == "Medium":
-    #     # Import and open the GUI from genetic_algorithm.py
-    #     from genetic_algorithm import open_genetic_algorithm_gui
-    #     open_genetic_algorithm_gui()
+    elif difficulty == "Medium":
+    #     Import and open the GUI from genetic_algorithm.py
+        from genetic_algorithm import open_genetic_algorithm_gui
+        open_genetic_algorithm_gui(root, "Human", "AI")
     # elif difficulty == "Hard":
     #     # Import and open the GUI from a_star.py
     #     from a_star import open_a_star_gui

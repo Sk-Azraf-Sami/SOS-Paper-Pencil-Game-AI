@@ -1,1 +1,1 @@
-open_fuzzy_logic_gui
+open_genetic_algorithm
