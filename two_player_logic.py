@@ -1,16 +1,67 @@
-from tkinter import ttk, messagebox
-def two_player_move(board, buttons, current_player, score, update_turn_label, update_score, check_for_sos, highlight_sos):
-    def make_move(row, col):
-        if board[row][col] == "":
-            board[row][col] = current_player[0]
-            buttons[row][col].config(text=current_player[0])
-            sos_positions = check_for_sos(row, col)
-            if sos_positions:
-                score[current_player[0]] += 1
-                update_score()
-                highlight_sos(sos_positions)
-            current_player[0] = "O" if current_player[0] == "S" else "S"
-            update_turn_label()
+import pygame
+from pygame.locals import *
+import board_gui as gui
+
+# Colors
+GREEN = (50, 70, 50)
+
+def pvp(mySurface, n):
+    currentPlayer = 1
+    scores = [0, 0]
+    board = [[0] * n for _ in range(n)]
+    mySurface.fill(GREEN)
+    gui.drawBoard(mySurface, n)
+    gui.displayTeam(mySurface)
+    gui.displayPlayer(mySurface, 1)
+    gui.displayScore(mySurface, scores)
+    while True:
+        gameFinished = True
+        for i in range(n):
+            for j in range(n):
+                if board[i][j] == 0:
+                    gameFinished = False
+        if gameFinished:
+            break
+        events = pygame.event.get()
+        for event in events:
+            if event.type == MOUSEBUTTONDOWN:
+                x, y = event.pos
+                if (70 < x < 70 + 70 * n) and (70 < y < 70 + 70 * n):
+                    j = (x - 70) // 70
+                    i = (y - 70) // 70
+                    if board[i][j] == 0:
+                        board[i][j] = 1 if event.button == 1 else 2
+                        score, lines = calculateScore(board, n, i, j)
+                        scores[currentPlayer - 1] += score
+                        gui.drawCell(mySurface, board, i, j, currentPlayer)
+                        gui.displayScore(mySurface, scores)
+                        gui.drawLines(mySurface, lines, currentPlayer)
+                        if score == 0:
+                            currentPlayer = 3 - currentPlayer
+                        gui.displayPlayer(mySurface, currentPlayer)
+        pygame.display.update()
+    pygame.quit()
+
+def calculateScore(board, n, row, col):
+    totalScore = 0
+    lines = []
+    for drow in [-1, 0, 1]:
+        for dcol in [-1, 0, 1]:
+            if drow == 0 and dcol == 0:
+                continue
+            s = countS(board, n, row, col, drow, dcol)
+            if s == 3:
+                totalScore += 1
+                lines.append((row, col, row + 2 * drow, col + 2 * dcol))
+    return totalScore, lines
+
+def countS(board, n, row, col, drow, dcol):
+    s = 0
+    for k in range(3):
+        r = row + k * drow
+        c = col + k * dcol
+        if 0 <= r < n and 0 <= c < n:
+            s += 1 if board[r][c] == 1 else 2 if board[r][c] == 2 else 0
         else:
-            messagebox.showwarning("Invalid Move", "This spot is already taken!")
-    return make_move
+            return 0
+    return s
