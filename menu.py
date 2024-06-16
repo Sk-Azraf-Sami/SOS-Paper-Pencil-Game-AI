@@ -79,12 +79,65 @@ def animate_background(canvas, image_sequence, image_index):
     canvas.create_image(0, 0, image=canvas.image, anchor=tk.NW)
     root.after(100, animate_background, canvas, image_sequence, (image_index + 1) % len(image_sequence))
 
+# Function to show the story of the game
+def show_story():
+    play_click_sound()
+    story_window = tk.Toplevel(root)
+    story_window.title("Game Story")
+
+    window_width = 400
+    window_height = 300
+    screen_width = story_window.winfo_screenwidth()
+    screen_height = story_window.winfo_screenheight()
+    center_x = int(screen_width / 2 - window_width / 2)
+    center_y = int(screen_height / 2 - window_height / 2)
+    story_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+    story_window.resizable(False, False)
+
+    story_text = (
+        "Origin:\n"
+        "The game 'SOS' was discovered and popularized in Turkey. It is a paper-and-pencil game typically "
+        "played by two players. Each player takes turns writing either an 'S' or an 'O' on a grid, with the "
+        "objective of forming the sequence 'SOS' either horizontally, vertically, or diagonally. The game "
+        "gained popularity in Turkish schools and has been enjoyed by children and adults alike. While its "
+        "exact origins are not well-documented, Turkey is widely recognized as the country where SOS became a well-known pastime."
+    )
+
+    tk.Label(story_window, text=story_text, wraplength=380).pack(pady=10)
+
+# Function to show the game rules
+def show_rules():
+    play_click_sound()
+    rules_window = tk.Toplevel(root)
+    rules_window.title("Game Rules")
+
+    window_width = 400
+    window_height = 200
+    screen_width = rules_window.winfo_screenwidth()
+    screen_height = rules_window.winfo_screenheight()
+    center_x = int(screen_width / 2 - window_width / 2)
+    center_y = int(screen_height / 2 - window_height / 2)
+    rules_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+    rules_window.resizable(False, False)
+
+    rules_text = (
+        "Game Rule:\n"
+        "SOS is a two-player game.\n"
+        "1. Players can place either S or O in an empty square on their turn.\n"
+        "2. Each player takes one turn at a time.\n"
+        "3. If a player forms an SOS sequence, they get another turn.\n"
+        "4. The game ends when all squares are filled.\n"
+        "5. The player with the most SOS sequences wins."
+    )
+
+    tk.Label(rules_window, text=rules_text, wraplength=380).pack(pady=10)
+
 # Create main window
 root = tk.Tk()
 root.title("Game Mode Selection")
 
-window_width = 700
-window_height = 500
+window_width = 400
+window_height = 350
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 center_x = int(screen_width / 2 - window_width / 2)
@@ -94,10 +147,10 @@ root.resizable(False, False)
 
 # Set digital clock-like font
 try:
-    digital_font = font.Font(family="Digital-7", size=26, weight="bold")
+    digital_font = font.Font(family="Digital-7", size=16, weight="bold")  # Smaller font size
 except Exception as e:
     print(f"Font loading error: {e}")
-    digital_font = font.Font(size=16, weight="bold")
+    digital_font = font.Font(size=12, weight="bold")  # Fallback font size
 
 # Create canvas for background animation
 canvas = tk.Canvas(root, width=window_width, height=window_height)
@@ -111,16 +164,16 @@ frames = [ImageTk.PhotoImage(frame) for frame in ImageSequence.Iterator(backgrou
 animate_background(canvas, frames, 0)
 
 # Add label and buttons to the canvas
-label = ttk.Label(root, text="Select Game Mode", font=digital_font, background='lightblue')
+label = ttk.Label(root, text="SOS (Paper-Pencil Game)", font=digital_font, background='lightblue')
 label_window = canvas.create_window(window_width/2, 50, window=label)
 
 # Configure styles for ttk widgets
 style = ttk.Style()
-style.configure("TButton", font=("Digital-7", 16), padding=10)
-style.configure("TMenubutton", font=("Digital-7", 16), padding=10)
+style.configure("TButton", font=digital_font, padding=2)  # Reduced padding
+style.configure("TMenubutton", font=digital_font, padding=2)  # Reduced padding
 
-# Create buttons for SOLO and MULTIPLAYER
-button_width = 20
+# Create buttons for SOLO, MULTIPLAYER, STORY, and RULES
+button_width = 10  # Reduced button width
 
 solo_button = ttk.Button(root, text="SOLO", width=button_width)
 solo_button_window = canvas.create_window(window_width/2, 120, window=solo_button)
@@ -148,25 +201,11 @@ root.bind("<Button-1>", hide_solo_menu)
 multiplayer_button = ttk.Button(root, text="MULTIPLAYER", command=start_multiplayer, width=button_width)
 multiplayer_button_window = canvas.create_window(window_width/2, 180, window=multiplayer_button)
 
-# Add text directly to the canvas for origin and rules
-info_text = (
-    "🕹️ Origin:\n"
-    "The game 'SOS' was discovered and popularized in Turkey. It is a paper-and-pencil game "
-    "typically played by two players. Each player takes turns writing either an 'S' or an 'O' on a grid, "
-    "with the objective of forming the sequence 'SOS' either horizontally, vertically, or diagonally. "
-    "The game gained popularity in Turkish schools and has been enjoyed by children and adults alike. "
-    "While its exact origins are not well-documented, Turkey is widely recognized as the country where "
-    "SOS became a well-known pastime.\n\n"
-    "📜 Game Rules:\n"
-    "1. SOS is a two-player game.\n"
-    "2. The players have the option to put either 'S' or 'O' at an empty square.\n"
-    "3. Each turn plays one player.\n"
-    "4. If a player makes an SOS sequence, that player plays another turn.\n"
-    "5. The game ends when all squares are filled out.\n"
-    "6. The player who makes the most SOS sequences wins."
-)
+story_button = ttk.Button(root, text="STORY", command=show_story, width=button_width)
+story_button_window = canvas.create_window(window_width/2, 240, window=story_button)
 
-canvas.create_text(window_width/2, 270, text=info_text, font=("Helvetica", 12), fill="white", width=window_width-40, anchor=tk.N)
+rules_button = ttk.Button(root, text="RULES", command=show_rules, width=button_width)
+rules_button_window = canvas.create_window(window_width/2, 300, window=rules_button)
 
 # Run the application
 root.mainloop()
