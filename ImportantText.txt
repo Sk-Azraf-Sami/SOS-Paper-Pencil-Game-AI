@@ -9,3 +9,15 @@ The choice of algorithm for each difficulty level in the SOS game can be subject
 4. **Very Hard Mode**: Minimax with Alpha-Beta Pruning - This is a decision-making algorithm used in game theory and artificial intelligence. With alpha-beta pruning, the algorithm becomes more efficient by ignoring branches that cannot possibly influence the final decision. This makes it the most complex and challenging algorithm among the four, suitable for a very hard difficulty level.
 
 Remember, these are just suggestions and the actual implementation might require adjustments based on the specifics of your game.
+
+
+Origin: 
+The game "SOS" was discovered and popularized in Turkey. It is a paper-and-pencil game typically played by two players. Each player takes turns writing either an "S" or an "O" on a grid, with the objective of forming the sequence "SOS" either horizontally, vertically, or diagonally. The game gained popularity in Turkish schools and has been enjoyed by children and adults alike. While its exact origins are not well-documented, Turkey is widely recognized as the country where SOS became a well-known pastime.
+
+Game Rule: 
+SOS is a two player game.
+The players have the option to put either S or O at an empty square.
+Each turn plays one player.
+If a player makes an SOS sequence that player plays another turn.
+The game ends when all squares are filled out.
+The player which will make the most SOS sequences wins.

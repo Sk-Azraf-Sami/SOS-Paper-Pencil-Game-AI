@@ -1,208 +1,155 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
-import random
+from tkinter import font
+import pygame
+from PIL import Image, ImageTk, ImageSequence
+from mutiplayer import open_multiplayer_board
 
-def open_genetic_algorithm_gui(root, player1, player2="AI"):
-    # Create a new top-level window
-    board_window = tk.Toplevel(root)
-    board_window.title("SOS Multiplayer Board")
+# Initialize pygame for sound and animation
+pygame.init()
 
-    # Set window size and position to match the main menu window
-    window_width = 400
-    window_height = 300
+# Load sound files
+background_sound = pygame.mixer.Sound('background_music.mp3')
+click_sound = pygame.mixer.Sound('button_click.mp3')
 
-    # Get the screen dimension
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+# Play background sound in a loop
+background_sound.play(loops=-1)
 
-    # Find the center point
+# Function to play button click sound
+def play_click_sound():
+    click_sound.play()
+
+# Function to select difficulty and open the corresponding GUI
+def select_difficulty(difficulty):
+    play_click_sound()
+    print(f"Selected difficulty: {difficulty}")
+    if difficulty == "Easy":
+        from fuzzy_logic import open_fuzzy_logic_gui
+        open_fuzzy_logic_gui(root, "Human", "AI")
+    elif difficulty == "Medium":
+        from genetic_algorithm import open_genetic_algorithm_gui
+        open_genetic_algorithm_gui(root, "Human", "AI")
+    elif difficulty == "Hard":
+        from a_star import open_a_star_gui
+        open_a_star_gui(root, "Human", "AI")
+    elif difficulty == "Very Hard":
+        from mini_max import open_mini_max
+        open_mini_max(root, "Human", "AI")
+
+# Function to prompt player names for multiplayer mode
+def prompt_player_names():
+    play_click_sound()
+    player_name_window = tk.Toplevel(root)
+    player_name_window.title("Enter Player Names")
+
+    window_width = 300
+    window_height = 200
+    screen_width = player_name_window.winfo_screenwidth()
+    screen_height = player_name_window.winfo_screenheight()
     center_x = int(screen_width / 2 - window_width / 2)
     center_y = int(screen_height / 2 - window_height / 2)
+    player_name_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+    player_name_window.resizable(False, False)
 
-    # Set the position of the window to the center of the screen
-    board_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-    board_window.resizable(False, False)
+    tk.Label(player_name_window, text="Player 1 Name:").pack(pady=5)
+    player1_entry = ttk.Entry(player_name_window)
+    player1_entry.pack(pady=5)
 
-    # Create a frame for the labels and the board
-    frame = ttk.Frame(board_window)
-    frame.grid(row=0, column=0, padx=10, pady=10)
+    tk.Label(player_name_window, text="Player 2 Name:").pack(pady=5)
+    player2_entry = ttk.Entry(player_name_window)
+    player2_entry.pack(pady=5)
 
-    # Score labels
-    player1_score = tk.IntVar()
-    player2_score = tk.IntVar()
+    def start_game():
+        play_click_sound()
+        player1 = player1_entry.get()
+        player2 = player2_entry.get()
+        player_name_window.destroy()
+        root.withdraw()
+        open_multiplayer_board(root, player1, player2)
 
-    # Create label variables for player names
-    player1_label = tk.StringVar()
-    player2_label = tk.StringVar()
+    start_button = ttk.Button(player_name_window, text="Start Game", command=start_game)
+    start_button.pack(pady=20)
 
-    # Update the labels with player names and colors
-    player1_label.set(f"Player 1: {player1} (S)")
-    player2_label.set(f"Player 2: {player2} (O)")
+def start_multiplayer():
+    prompt_player_names()
 
-    # Create labels with label variables and initial color
-    player1_name_label = tk.Label(frame, textvariable=player1_label, fg="red")
-    player1_name_label.grid(row=0, column=0, columnspan=3)
-    player2_name_label = tk.Label(frame, textvariable=player2_label, fg="black")
-    player2_name_label.grid(row=1, column=0, columnspan=3)
+# Function to animate the background
+def animate_background(canvas, image_sequence, image_index):
+    canvas.image = image_sequence[image_index]
+    canvas.create_image(0, 0, image=canvas.image, anchor=tk.NW)
+    root.after(100, animate_background, canvas, image_sequence, (image_index + 1) % len(image_sequence))
 
-    tk.Label(frame, textvariable=player1_score).grid(row=0, column=3)
-    tk.Label(frame, textvariable=player2_score).grid(row=1, column=3)
+# Create main window
+root = tk.Tk()
+root.title("Game Mode Selection")
 
-    board_size = 6
-    board = [['' for _ in range(board_size)] for _ in range(board_size)]
-    player_turn = [1]  # Use list to make it mutable in nested function
+window_width = 400
+window_height = 300
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+center_x = int(screen_width / 2 - window_width / 2)
+center_y = int(screen_height / 2 - window_height / 2)
+root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+root.resizable(False, False)
 
-    def check_sos(row, col, char):
-        found_sos = False
-        # Check for vertical and horizontal SOS sequence
-        for i in range(-2, 1):
-            if (0 <= row + i < board_size - 2 and
-                board[row + i][col] == 'S' and
-                board[row + i + 1][col] == 'O' and
-                board[row + i + 2][col] == 'S'):
-                found_sos = True
-            if (0 <= col + i < board_size - 2 and
-                board[row][col + i] == 'S' and
-                board[row][col + i + 1] == 'O' and
-                board[row][col + i + 2] == 'S'):
-                found_sos = True
+# Set digital clock-like font
+try:
+    digital_font = font.Font(family="Digital-7", size=26, weight="bold")
+except Exception as e:
+    print(f"Font loading error: {e}")
+    digital_font = font.Font(size=16, weight="bold")
 
-        # Check for diagonal SOS sequence
-        for i in range(-2, 1):
-            if (0 <= row + i < board_size - 2 and 0 <= col + i < board_size - 2 and
-                board[row + i][col + i] == 'S' and
-                board[row + i + 1][col + i + 1] == 'O' and
-                board[row + i + 2][col + i + 2] == 'S'):
-                found_sos = True
-            if (0 <= row - i < board_size - 2 and 0 <= col + i < board_size - 2 and
-                board[row - i][col + i] == 'S' and
-                board[row - i - 1][col + i + 1] == 'O' and
-                board[row - i - 2][col + i + 2] == 'S'):
-                found_sos = True
+# Create canvas for background animation
+canvas = tk.Canvas(root, width=window_width, height=window_height)
+canvas.pack(fill="both", expand=True)
 
-        return found_sos
+# Load and prepare animated GIF for background
+background_gif = Image.open('background.gif')
+frames = [ImageTk.PhotoImage(frame) for frame in ImageSequence.Iterator(background_gif)]
 
-    def check_winner(row, col, char):
-        if check_sos(row, col, char):
-            current_player = player_turn[0]
-            if current_player == 1:
-                player1_score.set(player1_score.get() + 1)
-                print(f"Player 1 scores a point! ({row}, {col}) is part of an SOS sequence. Current Score: {player1_score.get()}")
-            else:
-                player2_score.set(player2_score.get() + 1)
-                print(f"Player 2 scores a point! ({row}, {col}) is part of an SOS sequence. Current Score: {player2_score.get()}")
-            return True
-        return False
+# Start animation
+animate_background(canvas, frames, 0)
 
-    def handle_click(event, row, col):
-        current_player = player_turn[0]
-        char = 'S' if event.num == 1 else 'O'
-        if board[row][col] == '':
-            board[row][col] = char
-            buttons[row][col].config(text=char, state='disabled')
-            print(f"Cell clicked: ({row}, {col}), contains: '{char}'")  # Print cell location and content
-            if not check_winner(row, col, char):
-                player_turn[0] = 2 if current_player == 1 else 1
-                # Update label colors
-                if player_turn[0] == 1:
-                    player1_name_label.config(fg="red")
-                    player2_name_label.config(fg="black")
-                else:
-                    player1_name_label.config(fg="black")
-                    player2_name_label.config(fg="red")
-            check_game_end()
-            if player_turn[0] == 2:
-                ai_move()
+# Add label and buttons to the canvas
+label = ttk.Label(root, text="Select Game Mode", font=digital_font, background='lightblue')
+label_window = canvas.create_window(window_width/2, 50, window=label)
 
-    def check_game_end():
-        if all(cell != '' for row in board for cell in row):
-            if player1_score.get() > player2_score.get():
-                winner = player1
-            elif player2_score.get() > player1_score.get():
-                winner = player2
-            else:
-                winner = "No one, it's a tie!"
-            messagebox.showinfo("Game Over", f"Game Over! The winner is: {winner}")
-            board_window.destroy()
-            root.destroy()
+# Configure styles for ttk widgets
+style = ttk.Style()
+style.configure("TButton", font=("Helvetica", 12), padding=10)
+style.configure("TMenubutton", font=("Helvetica", 12), padding=10)
 
-    def ai_move():
-        best_move = genetic_algorithm()
-        if best_move:
-            row, col, char = best_move
-            board[row][col] = char
-            buttons[row][col].config(text=char, state='disabled')
-            print(f"AI move: ({row}, {col}), contains: '{char}'")  # Print AI move
-            if not check_winner(row, col, char):
-                player_turn[0] = 1
-                player1_name_label.config(fg="red")
-                player2_name_label.config(fg="black")
-            check_game_end()
+# Create buttons for SOLO and MULTIPLAYER
+button_width = 20
 
-    def genetic_algorithm():
-        population_size = 100
-        generations = 50
-        mutation_rate = 0.1
+solo_button = ttk.Button(root, text="SOLO", width=button_width)
+solo_button_window = canvas.create_window(window_width/2, 120, window=solo_button)
 
-        def fitness(move):
-            row, col, char = move
-            if board[row][col] != '':
-                return -1
-            board[row][col] = char
-            score = player2_score.get() + (1 if check_sos(row, col, char) else 0)
-            board[row][col] = ''
-            return score
+# Create menu for SOLO button
+solo_menu = tk.Menu(root, tearoff=0)
+for difficulty in ["Easy", "Medium", "Hard", "Very Hard"]:
+    solo_menu.add_command(label=difficulty, command=lambda d=difficulty: select_difficulty(d))
 
-        def mutate(move):
-            row, col, char = move
-            if random.random() < mutation_rate:
-                row = random.randint(0, board_size - 1)
-            if random.random() < mutation_rate:
-                col = random.randint(0, board_size - 1)
-            if random.random() < mutation_rate:
-                char = 'S' if char == 'O' else 'O'
-            return (row, col, char)
+def show_solo_menu(event):
+    play_click_sound()
+    solo_menu.post(event.x_root, event.y_root)
 
-        def crossover(parent1, parent2):
-            row = parent1[0] if random.random() < 0.5 else parent2[0]
-            col = parent1[1] if random.random() < 0.5 else parent2[1]
-            char = parent1[2] if random.random() < 0.5 else parent2[2]
-            return (row, col, char)
+solo_button.bind("<Button-1>", show_solo_menu)
 
-        population = [(random.randint(0, board_size - 1), random.randint(0, board_size - 1), random.choice(['S', 'O'])) for _ in range(population_size)]
+# Hide menu when clicking outside
+def hide_solo_menu(event):
+    if not solo_menu.winfo_ismapped():
+        return
+    if event.widget is not solo_button:
+        solo_menu.unpost()
 
-        for _ in range(generations):
-            population = sorted(population, key=fitness, reverse=True)
-            next_generation = population[:population_size // 2]
+root.bind("<Button-1>", hide_solo_menu)
 
-            while len(next_generation) < population_size:
-                parent1 = random.choice(next_generation)
-                parent2 = random.choice(next_generation)
-                child = mutate(crossover(parent1, parent2))
-                next_generation.append(child)
+multiplayer_button = ttk.Button(root, text="MULTIPLAYER", command=start_multiplayer, width=button_width)
+multiplayer_button_window = canvas.create_window(window_width/2, 180, window=multiplayer_button)
 
-            population = next_generation
+# Run the application
+root.mainloop()
 
-        best_move = max(population, key=fitness)
-        if fitness(best_move) >= 0:
-            return best_move
-        return None
-
-    buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
-    for row in range(board_size):
-        for col in range(board_size):
-            button = ttk.Button(frame, text='', width=5, command=lambda r=row, c=col: handle_click(None, r, c))
-            button.grid(row=row+2, column=col, padx=5, pady=5)  # Adjust row index to leave space for labels
-            button.bind('<Button-1>', lambda event, r=row, c=col: handle_click(event, r, c))
-            button.bind('<Button-3>', lambda event, r=row, c=col: handle_click(event, r, c))
-            buttons[row][col] = button
-
-    # Ensure the root window is destroyed when the board window is closed
-    board_window.protocol("WM_DELETE_WINDOW", root.destroy)
-
-if __name__ == "__main__":
-    # This part is optional and can be used to test the board independently
-    root = tk.Tk()
-    open_genetic_algorithm_gui(root, "Player 1", "AI")
-    root.mainloop()
+# Quit pygame when the tkinter window is closed
+pygame.quit()

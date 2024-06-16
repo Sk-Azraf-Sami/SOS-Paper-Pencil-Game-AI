@@ -1,49 +1,56 @@
 import tkinter as tk
 from tkinter import ttk
-from mutiplayer import open_multiplayer_board  # Import the function from board.py
+from tkinter import font
+import pygame
+from PIL import Image, ImageTk, ImageSequence
+from mutiplayer import open_multiplayer_board
 
+# Initialize pygame for sound and animation
+pygame.init()
+
+# Load sound files
+background_sound = pygame.mixer.Sound('background_music.mp3')
+click_sound = pygame.mixer.Sound('button_click.mp3')
+
+# Play background sound in a loop
+background_sound.play(loops=-1)
+
+# Function to play button click sound
+def play_click_sound():
+    click_sound.play()
+
+# Function to select difficulty and open the corresponding GUI
 def select_difficulty(difficulty):
+    play_click_sound()
     print(f"Selected difficulty: {difficulty}")
     if difficulty == "Easy":
-        # Import and open the GUI from fuzzy_logic.py
         from fuzzy_logic import open_fuzzy_logic_gui
-        # Now you can call the function
         open_fuzzy_logic_gui(root, "Human", "AI")
     elif difficulty == "Medium":
-    #     Import and open the GUI from genetic_algorithm.py
         from genetic_algorithm import open_genetic_algorithm_gui
         open_genetic_algorithm_gui(root, "Human", "AI")
     elif difficulty == "Hard":
-    #     # Import and open the GUI from a_star.py
         from a_star import open_a_star_gui
         open_a_star_gui(root, "Human", "AI")
     elif difficulty == "Very Hard":
-    #     # Import and open the GUI from minimax_alpha_beta.py
-          from mini_max import open_mini_max
-          open_mini_max(root, "Human", "AI")
+        from mini_max import open_mini_max
+        open_mini_max(root, "Human", "AI")
 
-# Function to open the player name input window and hide the main menu
+# Function to prompt player names for multiplayer mode
 def prompt_player_names():
+    play_click_sound()
     player_name_window = tk.Toplevel(root)
     player_name_window.title("Enter Player Names")
 
-    # Set window size
     window_width = 300
     window_height = 200
-
-    # Get the screen dimension
     screen_width = player_name_window.winfo_screenwidth()
     screen_height = player_name_window.winfo_screenheight()
-
-    # Find the center point
     center_x = int(screen_width / 2 - window_width / 2)
     center_y = int(screen_height / 2 - window_height / 2)
-
-    # Set the position of the window to the center of the screen
     player_name_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
     player_name_window.resizable(False, False)
 
-    # Create labels and entry widgets for player names
     tk.Label(player_name_window, text="Player 1 Name:").pack(pady=5)
     player1_entry = ttk.Entry(player_name_window)
     player1_entry.pack(pady=5)
@@ -53,57 +60,116 @@ def prompt_player_names():
     player2_entry.pack(pady=5)
 
     def start_game():
+        play_click_sound()
         player1 = player1_entry.get()
         player2 = player2_entry.get()
         player_name_window.destroy()
-        root.withdraw()  # Hide the main menu window
-        open_multiplayer_board(root, player1, player2)  # Pass player names to the board function
+        root.withdraw()
+        open_multiplayer_board(root, player1, player2)
 
     start_button = ttk.Button(player_name_window, text="Start Game", command=start_game)
     start_button.pack(pady=20)
 
 def start_multiplayer():
-    prompt_player_names()  # Open the player name input window
+    prompt_player_names()
+
+# Function to animate the background
+def animate_background(canvas, image_sequence, image_index):
+    canvas.image = image_sequence[image_index]
+    canvas.create_image(0, 0, image=canvas.image, anchor=tk.NW)
+    root.after(100, animate_background, canvas, image_sequence, (image_index + 1) % len(image_sequence))
 
 # Create main window
 root = tk.Tk()
 root.title("Game Mode Selection")
 
-# Set window size
-window_width = 400
-window_height = 300
-
-# Get the screen dimension
+window_width = 700
+window_height = 500
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-
-# Find the center point
 center_x = int(screen_width / 2 - window_width / 2)
 center_y = int(screen_height / 2 - window_height / 2)
-
-# Set the position of the window to the center of the screen
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 root.resizable(False, False)
 
-# Add label and buttons for the main window
-label = ttk.Label(root, text="Select Game Mode", font=("Helvetica", 16))
-label.pack(pady=20)
+# Set digital clock-like font
+try:
+    digital_font = font.Font(family="Digital-7", size=26, weight="bold")
+except Exception as e:
+    print(f"Font loading error: {e}")
+    digital_font = font.Font(size=16, weight="bold")
 
-# Create a Menubutton for SOLO
-solo_button = ttk.Menubutton(root, text="SOLO", direction="below")
-solo_menu = tk.Menu(solo_button, tearoff=0)
-solo_button['menu'] = solo_menu
+# Create canvas for background animation
+canvas = tk.Canvas(root, width=window_width, height=window_height)
+canvas.pack(fill="both", expand=True)
 
-# Add difficulty options to the menu
-difficulties = ["Easy", "Medium", "Hard", "Very Hard"]
-for difficulty in difficulties:
+# Load and prepare animated GIF for background
+background_gif = Image.open('background.gif')
+frames = [ImageTk.PhotoImage(frame) for frame in ImageSequence.Iterator(background_gif)]
+
+# Start animation
+animate_background(canvas, frames, 0)
+
+# Add label and buttons to the canvas
+label = ttk.Label(root, text="Select Game Mode", font=digital_font, background='lightblue')
+label_window = canvas.create_window(window_width/2, 50, window=label)
+
+# Configure styles for ttk widgets
+style = ttk.Style()
+style.configure("TButton", font=("Digital-7", 16), padding=10)
+style.configure("TMenubutton", font=("Digital-7", 16), padding=10)
+
+# Create buttons for SOLO and MULTIPLAYER
+button_width = 20
+
+solo_button = ttk.Button(root, text="SOLO", width=button_width)
+solo_button_window = canvas.create_window(window_width/2, 120, window=solo_button)
+
+# Create menu for SOLO button
+solo_menu = tk.Menu(root, tearoff=0)
+for difficulty in ["Easy", "Medium", "Hard", "Very Hard"]:
     solo_menu.add_command(label=difficulty, command=lambda d=difficulty: select_difficulty(d))
 
-solo_button.pack(pady=10)
+def show_solo_menu(event):
+    play_click_sound()
+    solo_menu.post(event.x_root, event.y_root)
 
-# Update the multiplayer button to call the start_multiplayer function
-multiplayer_button = ttk.Button(root, text="MULTIPLAYER", command=start_multiplayer)
-multiplayer_button.pack(pady=10)
+solo_button.bind("<Button-1>", show_solo_menu)
+
+# Hide menu when clicking outside
+def hide_solo_menu(event):
+    if not solo_menu.winfo_ismapped():
+        return
+    if event.widget is not solo_button:
+        solo_menu.unpost()
+
+root.bind("<Button-1>", hide_solo_menu)
+
+multiplayer_button = ttk.Button(root, text="MULTIPLAYER", command=start_multiplayer, width=button_width)
+multiplayer_button_window = canvas.create_window(window_width/2, 180, window=multiplayer_button)
+
+# Add text directly to the canvas for origin and rules
+info_text = (
+    "🕹️ Origin:\n"
+    "The game 'SOS' was discovered and popularized in Turkey. It is a paper-and-pencil game "
+    "typically played by two players. Each player takes turns writing either an 'S' or an 'O' on a grid, "
+    "with the objective of forming the sequence 'SOS' either horizontally, vertically, or diagonally. "
+    "The game gained popularity in Turkish schools and has been enjoyed by children and adults alike. "
+    "While its exact origins are not well-documented, Turkey is widely recognized as the country where "
+    "SOS became a well-known pastime.\n\n"
+    "📜 Game Rules:\n"
+    "1. SOS is a two-player game.\n"
+    "2. The players have the option to put either 'S' or 'O' at an empty square.\n"
+    "3. Each turn plays one player.\n"
+    "4. If a player makes an SOS sequence, that player plays another turn.\n"
+    "5. The game ends when all squares are filled out.\n"
+    "6. The player who makes the most SOS sequences wins."
+)
+
+canvas.create_text(window_width/2, 270, text=info_text, font=("Helvetica", 12), fill="white", width=window_width-40, anchor=tk.N)
 
 # Run the application
 root.mainloop()
+
+# Quit pygame when the tkinter window is closed
+pygame.quit()
