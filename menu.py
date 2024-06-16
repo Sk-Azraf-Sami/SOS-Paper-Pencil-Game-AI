@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from board import open_multiplayer_board  # Import the function from board.py
+from mutiplayer import open_multiplayer_board  # Import the function from board.py
 
 def select_difficulty(difficulty):
     print(f"Selected difficulty: {difficulty}")
@@ -17,10 +17,10 @@ def select_difficulty(difficulty):
     #     # Import and open the GUI from a_star.py
         from a_star import open_a_star_gui
         open_a_star_gui(root, "Human", "AI")
-    # elif difficulty == "Very Hard":
+    elif difficulty == "Very Hard":
     #     # Import and open the GUI from minimax_alpha_beta.py
-    #     from minimax_alpha_beta import open_minimax_alpha_beta_gui
-    #     open_minimax_alpha_beta_gui()
+          from mini_max import open_mini_max
+          open_mini_max(root, "Human", "AI")
 
 # Function to open the player name input window and hide the main menu
 def prompt_player_names():
