@@ -197,5 +197,5 @@ def open_mini_max(root, player1, player2="AI"):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    open_genetic_algorithm_gui(root, "Player 1", "AI")
+    open_mini_max(root, "Player 1", "AI")
     root.mainloop()
