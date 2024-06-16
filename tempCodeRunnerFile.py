@@ -1,1 +1,1 @@
-open_genetic_algorithm
+open_a_star_gui

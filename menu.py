@@ -13,10 +13,10 @@ def select_difficulty(difficulty):
     #     Import and open the GUI from genetic_algorithm.py
         from genetic_algorithm import open_genetic_algorithm_gui
         open_genetic_algorithm_gui(root, "Human", "AI")
-    # elif difficulty == "Hard":
+    elif difficulty == "Hard":
     #     # Import and open the GUI from a_star.py
-    #     from a_star import open_a_star_gui
-    #     open_a_star_gui()
+        from a_star import open_a_star_gui
+        open_a_star_gui(root, "Human", "AI")
     # elif difficulty == "Very Hard":
     #     # Import and open the GUI from minimax_alpha_beta.py
     #     from minimax_alpha_beta import open_minimax_alpha_beta_gui
