@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-import random
 
-def open_genetic_algorithm_gui(root, player1, player2="AI"):
+def open_multiplayer_board(root, player1, player2):
     # Create a new top-level window
     board_window = tk.Toplevel(root)
     board_window.title("SOS Multiplayer Board")
@@ -52,6 +51,7 @@ def open_genetic_algorithm_gui(root, player1, player2="AI"):
     board_size = 6
     board = [['' for _ in range(board_size)] for _ in range(board_size)]
     player_turn = [1]  # Use list to make it mutable in nested function
+
 
     def check_sos(row, col, char):
         found_sos = False
@@ -112,8 +112,6 @@ def open_genetic_algorithm_gui(root, player1, player2="AI"):
                     player1_name_label.config(fg="black")
                     player2_name_label.config(fg="red")
             check_game_end()
-            if player_turn[0] == 2:
-                ai_move()
 
     def check_game_end():
         if all(cell != '' for row in board for cell in row):
@@ -126,68 +124,6 @@ def open_genetic_algorithm_gui(root, player1, player2="AI"):
             messagebox.showinfo("Game Over", f"Game Over! The winner is: {winner}")
             board_window.destroy()
             root.destroy()
-
-    def ai_move():
-        best_move = genetic_algorithm()
-        if best_move:
-            row, col, char = best_move
-            board[row][col] = char
-            buttons[row][col].config(text=char, state='disabled')
-            print(f"AI move: ({row}, {col}), contains: '{char}'")  # Print AI move
-            if not check_winner(row, col, char):
-                player_turn[0] = 1
-                player1_name_label.config(fg="red")
-                player2_name_label.config(fg="black")
-            check_game_end()
-
-    def genetic_algorithm():
-        population_size = 100
-        generations = 50
-        mutation_rate = 0.1
-
-        def fitness(move):
-            row, col, char = move
-            if board[row][col] != '':
-                return -1
-            board[row][col] = char
-            score = player2_score.get() + (1 if check_sos(row, col, char) else 0)
-            board[row][col] = ''
-            return score
-
-        def mutate(move):
-            row, col, char = move
-            if random.random() < mutation_rate:
-                row = random.randint(0, board_size - 1)
-            if random.random() < mutation_rate:
-                col = random.randint(0, board_size - 1)
-            if random.random() < mutation_rate:
-                char = 'S' if char == 'O' else 'O'
-            return (row, col, char)
-
-        def crossover(parent1, parent2):
-            row = parent1[0] if random.random() < 0.5 else parent2[0]
-            col = parent1[1] if random.random() < 0.5 else parent2[1]
-            char = parent1[2] if random.random() < 0.5 else parent2[2]
-            return (row, col, char)
-
-        population = [(random.randint(0, board_size - 1), random.randint(0, board_size - 1), random.choice(['S', 'O'])) for _ in range(population_size)]
-
-        for _ in range(generations):
-            population = sorted(population, key=fitness, reverse=True)
-            next_generation = population[:population_size // 2]
-
-            while len(next_generation) < population_size:
-                parent1 = random.choice(next_generation)
-                parent2 = random.choice(next_generation)
-                child = mutate(crossover(parent1, parent2))
-                next_generation.append(child)
-
-            population = next_generation
-
-        best_move = max(population, key=fitness)
-        if fitness(best_move) >= 0:
-            return best_move
-        return None
 
     buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
     for row in range(board_size):
@@ -204,5 +140,5 @@ def open_genetic_algorithm_gui(root, player1, player2="AI"):
 if __name__ == "__main__":
     # This part is optional and can be used to test the board independently
     root = tk.Tk()
-    open_genetic_algorithm_gui(root, "Player 1", "AI")
+    open_multiplayer_board(root, "Player 1", "Player 2")
     root.mainloop()
