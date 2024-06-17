@@ -64,6 +64,8 @@ def prompt_player_names():
         player1 = player1_entry.get()
         player2 = player2_entry.get()
         player_name_window.destroy()
+        # Stop background music and withdraw root window before opening multiplayer board
+        background_sound.stop()
         root.withdraw()
         open_multiplayer_board(root, player1, player2)
 

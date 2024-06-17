@@ -2,14 +2,20 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image, ImageTk, ImageSequence
+import pygame
+
+pygame.mixer.init()
 
 def open_multiplayer_board(root, player1, player2):
+    # Pause any background music from root
+    pygame.mixer.music.pause()
+
     # Create a new top-level window
     board_window = tk.Toplevel(root)
     board_window.title("SOS Multiplayer Board")
 
     # Set window size and position to match the main menu window
-    window_width = 500
+    window_width = 1000  # Increased width to accommodate scoreboard
     window_height = 600
 
     # Get the screen dimension
@@ -24,9 +30,32 @@ def open_multiplayer_board(root, player1, player2):
     board_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
     board_window.resizable(False, False)
 
-    # Create a frame for the labels and the board
-    frame = ttk.Frame(board_window)
-    frame.grid(row=0, column=0, padx=10, pady=10)
+    # Load background image
+    background_image = Image.open("forest.jpg")
+    background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.ANTIALIAS))
+    background_label = tk.Label(board_window, image=background_photo)
+    background_label.image = background_photo  # Store a reference to the image object
+    background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+    # Load background music
+    pygame.mixer.music.load("forest.mp3")
+    pygame.mixer.music.play(-1)
+
+    # Create a frame for the game board and scoreboard
+    main_frame = ttk.Frame(board_window, style="Custom.TFrame")
+    main_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+    # Create a frame for the game board
+    board_frame = ttk.Frame(main_frame, style="Custom.TFrame")
+    board_frame.grid(row=0, column=0, padx=(20, 10), pady=20)
+
+    # Create a frame for the scoreboard
+    scoreboard_frame = ttk.Frame(main_frame, style="Custom.TFrame")
+    scoreboard_frame.grid(row=0, column=1, padx=(10, 20), pady=20)
+
+    # Load custom font
+    digital7_font = ("Digital-7", 20)
+    modern_font = ("Helvetica", 16, "bold")
 
     # Score labels
     player1_score = tk.IntVar()
@@ -41,13 +70,16 @@ def open_multiplayer_board(root, player1, player2):
     player2_label.set(f"Player 2: {player2}")
 
     # Create labels with label variables and initial color
-    player1_name_label = tk.Label(frame, textvariable=player1_label, fg="red")
-    player1_name_label.grid(row=0, column=0, columnspan=3)
-    player2_name_label = tk.Label(frame, textvariable=player2_label, fg="black")
-    player2_name_label.grid(row=1, column=0, columnspan=3)
+    player1_name_label = tk.Label(scoreboard_frame, textvariable=player1_label, fg="red", font=modern_font, bg="forestgreen")
+    player1_name_label.grid(row=0, column=0, pady=(0, 10))
+    player2_name_label = tk.Label(scoreboard_frame, textvariable=player2_label, fg="black", font=modern_font, bg="forestgreen")
+    player2_name_label.grid(row=1, column=0, pady=(0, 10))
 
-    tk.Label(frame, textvariable=player1_score).grid(row=0, column=3)
-    tk.Label(frame, textvariable=player2_score).grid(row=1, column=3)
+    # Score displays
+    player1_score_label = tk.Label(scoreboard_frame, textvariable=player1_score, font=digital7_font, bg="forestgreen")
+    player1_score_label.grid(row=0, column=1, padx=20, pady=(0, 10))
+    player2_score_label = tk.Label(scoreboard_frame, textvariable=player2_score, font=digital7_font, bg="forestgreen")
+    player2_score_label.grid(row=1, column=1, padx=20, pady=(0, 10))
 
     board_size = 6
     board = [['' for _ in range(board_size)] for _ in range(board_size)]
@@ -139,7 +171,7 @@ def open_multiplayer_board(root, player1, player2):
             print(f"Cell clicked: ({row}, {col}), contains: '{char}'")  # Print cell location and content
             if not check_winner(row, col, char):
                 player_turn[0] = 2 if current_player == 1 else 1
-                # Update label colors
+                # Update label colors to indicate the player's turn
                 if player_turn[0] == 1:
                     player1_name_label.config(fg="red")
                     player2_name_label.config(fg="black")
@@ -147,3 +179,38 @@ def open_multiplayer_board(root, player1, player2):
                     player1_name_label.config(fg="black")
                     player2_name_label.config(fg="red")
             check_game_end()
+
+    def check_game_end():
+        if all(cell != '' for row in board for cell in row):
+            if player1_score.get() > player2_score.get():
+                winner = player1
+            elif player2_score.get() > player1_score.get():
+                winner = player2
+            else:
+                winner = "No one, it's a tie!"
+            messagebox.showinfo("Game Over", f"Game Over! The winner is: {winner}")
+            board_window.destroy()
+            root.destroy()
+
+    buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
+    for row in range(board_size):
+        for col in range(board_size):
+            button = ttk.Button(board_frame, text='', width=5, command=lambda r=row, c=col: handle_click(None, r, c))
+            button.grid(row=row, column=col, padx=5, pady=5)  # Adjust row index to leave space for labels
+            button.config(image=forest_frames[0])  # Set the default image
+            button.animation_id = None  # Add an attribute to store the animation ID
+            update_button_image(button, forest_frames)  # Start the animation for forest.gif
+            button.bind('<Button-1>', lambda event, r=row, c=col: handle_click(event, r, c))
+            button.bind('<Button-3>', lambda event, r=row, c=col: handle_click(event, r, c))
+            buttons[row][col] = button
+
+    # Ensure the root window is destroyed when the board window is closed
+    board_window.protocol("WM_DELETE_WINDOW", root.destroy)
+
+if __name__ == "__main__":
+    # This part is optional and can be used to test the board independently
+    root = tk.Tk()
+    # Load custom font for the main window
+    root.option_add("*Font", "Digital-7 12")
+    open_multiplayer_board(root, "Player 1", "Player 2")
+    root.mainloop()
