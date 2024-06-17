@@ -7,7 +7,7 @@ import pygame
 pygame.mixer.init()
 
 def open_multiplayer_board(root, player1, player2):
-        # Pause any background music from root
+    # Pause any background music from root
     pygame.mixer.music.pause()
 
     # Create a new top-level window
@@ -15,7 +15,7 @@ def open_multiplayer_board(root, player1, player2):
     board_window.title("SOS Multiplayer Board")
 
     # Set window size and position to match the main menu window
-    window_width =  650# Increased width to accommodate scoreboard
+    window_width =  650 # Increased width to accommodate scoreboard
     window_height = 400
 
     # Get the screen dimension
@@ -98,6 +98,7 @@ def open_multiplayer_board(root, player1, player2):
     forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("forest.gif"))]
     tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("tiger.gif"))]
     lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("lion.gif"))]
+
     def check_sos(row, col, char):
         found_sos = False
         sos_positions = []
@@ -165,7 +166,7 @@ def open_multiplayer_board(root, player1, player2):
 
     def handle_click(event, row, col):
         current_player = player_turn[0]
-        char = 'S' if event.num == 1 else 'O'
+        char = 'S' if current_player == 1 else 'O'
         frames = fire_frames if char == 'S' else water_frames
 
         if board[row][col] == '':
