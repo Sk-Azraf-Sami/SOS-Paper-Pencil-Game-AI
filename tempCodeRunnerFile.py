@@ -7,7 +7,7 @@ import pygame
 pygame.mixer.init()
 
 def open_multiplayer_board(root, player1, player2):
-        # Pause any background music from root
+    # Pause any background music from root
     pygame.mixer.music.pause()
 
     # Create a new top-level window
@@ -15,7 +15,7 @@ def open_multiplayer_board(root, player1, player2):
     board_window.title("SOS Multiplayer Board")
 
     # Set window size and position to match the main menu window
-    window_width =  650# Increased width to accommodate scoreboard
+    window_width = 650 # Increased width to accommodate scoreboard
     window_height = 400
 
     # Get the screen dimension
@@ -96,8 +96,9 @@ def open_multiplayer_board(root, player1, player2):
     fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("fire.gif"))]
     water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("water.gif"))]
     forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("forest.gif"))]
-    tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("tiger.gif"))]
-    lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("lion.gif"))]
+    
+    
+
     def check_sos(row, col, char):
         found_sos = False
         sos_positions = []
@@ -137,13 +138,13 @@ def open_multiplayer_board(root, player1, player2):
         found_sos, sos_positions = check_sos(row, col, char)
         if found_sos:
             current_player = player_turn[0]
-            frames = tiger_frames if current_player == 1 else lion_frames
+            color = "light red" if current_player == 1 else "light gray"
             for pos in sos_positions:
                 r, c = pos
-                if buttons[r][c].animation_id:
-                    board_window.after_cancel(buttons[r][c].animation_id)
-                    buttons[r][c].animation_id = None
-                update_button_image(buttons[r][c], frames)
+                style_name = f"TButton_{r}_{c}"
+                style = ttk.Style()
+                style.configure(style_name, background=color)
+                buttons[r][c].config(style=style_name)
 
             if current_player == 1:
                 player1_score.set(player1_score.get() + 1)
@@ -154,8 +155,67 @@ def open_multiplayer_board(root, player1, player2):
             return True
         return False
 
+    def handle_click(event, row, col):
+        current_player = player_turn[0]
+        char = 'S' if event.num == 1 else 'O'
+        frames = fire_frames if char == 'S' else water_frames
+
+        if board[row][col] == '':
+            # Stop the forest GIF animation
+            if buttons[row][col].animation_id:
+                board_window.after_cancel(buttons[row][col].animation_id)
+
+            board[row][col] = char
+            update_button_image(buttons[row][col], frames)
+            print(f"Cell clicked: ({row}, {col}), contains: '{char}'")  # Print cell location and content
+            if not check_winner(row, col, char):
+                player_turn[0] = 2 if current_player == 1 else 1
+                # Update label colors to indicate the player's turn
+                if player_turn[0] == 1:
+                    player1_name_label.config(fg="red")
+                    player2_name_label.config(fg="black")
+                else:
+                    player1_name_label.config(fg="black")
+                    player2_name_label.config(fg="red")
+            check_game_end()
+
+    def check_game_end():
+        if all(cell != '' for row in board for cell in row):
+            if player1_score.get() > player2_score.get():
+                winner = player1
+            elif player2_score.get() > player1_score.get():
+                winner = player2
+            else:
+                winner = "No one, it's a tie!"
+            messagebox.showinfo("Game Over", f"Game Over! The winner is: {winner}")
+            board_window.destroy()
+            root.destroy()
+
     def update_button_image(button, frames, index=0, animation_id=None):
         # Update the button image with the next frame
         button.config(image=frames[index])
         animation_id = board_window.after(100, update_button_image, button, frames, (index + 1) % len(frames), animation_id)
         button.animation_id = animation_id  # Store the animation ID
+
+    buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
+    for row in range(board_size):
+        for col in range(board_size):
+            button = ttk.Button(board_frame, text='', width=5, command=lambda r=row, c=col: handle_click(None, r, c))
+            button.grid(row=row, column=col, padx=5, pady=5)  # Adjust row index to leave space for labels
+            button.config(image=forest_frames[0])  # Set the default image
+            button.animation_id = None  # Add an attribute to store the animation ID
+            update_button_image(button, forest_frames)  # Start the animation for forest.gif
+            button.bind('<Button-1>', lambda event, r=row, c=col: handle_click(event, r, c))
+            button.bind('<Button-3>', lambda event, r=row, c=col: handle_click(event, r, c))
+            buttons[row][col] = button
+
+    # Ensure the root window is destroyed when the board window is closed
+    board_window.protocol("WM_DELETE_WINDOW", root.destroy)
+
+if __name__ == "__main__":
+    # This part is optional and can be used to test the board independently
+    root = tk.Tk()
+    # Load custom font for the main window
+    root.option_add("*Font", "Digital-7 12")
+    open_multiplayer_board(root, "Player 1", "Player 2")
+    root.mainloop()

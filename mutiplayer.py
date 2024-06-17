@@ -62,7 +62,7 @@ def open_multiplayer_board(root, player1, player2):
 
     # Load custom font
     digital7_font = ("Digital-7", 20)
-    modern_font = ("Helvetica", 16, "bold")
+    modern_font = ("Helvetica", 12,)
 
     # Score labels
     player1_score = tk.IntVar()
@@ -137,6 +137,8 @@ def open_multiplayer_board(root, player1, player2):
         found_sos, sos_positions = check_sos(row, col, char)
         if found_sos:
             current_player = player_turn[0]
+           
+            # start(if don't want to show tiger-lion, comment it)
             frames = tiger_frames if current_player == 1 else lion_frames
             for pos in sos_positions:
                 r, c = pos
@@ -144,7 +146,8 @@ def open_multiplayer_board(root, player1, player2):
                     board_window.after_cancel(buttons[r][c].animation_id)
                     buttons[r][c].animation_id = None
                 update_button_image(buttons[r][c], frames)
-
+            #end
+            
             if current_player == 1:
                 player1_score.set(player1_score.get() + 1)
                 print(f"Player 1 scores a point! ({row}, {col}) is part of an SOS sequence. Current Score: {player1_score.get()}")
@@ -169,10 +172,10 @@ def open_multiplayer_board(root, player1, player2):
             # Stop the forest GIF animation
             if buttons[row][col].animation_id:
                 board_window.after_cancel(buttons[row][col].animation_id)
-                buttons[row][col].animation_id = None
+                #buttons[row][col].animation_id = None
 
             board[row][col] = char
-            buttons[row][col].config(state='disabled')
+            #buttons[row][col].config(state='disabled')
             update_button_image(buttons[row][col], frames)
             print(f"Cell clicked: ({row}, {col}), contains: '{char}'")  # Print cell location and content
             if not check_winner(row, col, char):

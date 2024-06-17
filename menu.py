@@ -171,8 +171,8 @@ label_window = canvas.create_window(window_width/2, 50, window=label)
 
 # Configure styles for ttk widgets
 style = ttk.Style()
-style.configure("TButton", font=digital_font, padding=2)  # Reduced padding
-style.configure("TMenubutton", font=digital_font, padding=2)  # Reduced padding
+style.configure("TButton", font=digital_font, padding=1)  # Reduced padding
+style.configure("TMenubutton", font=digital_font, padding=1)  # Reduced padding
 
 # Create buttons for SOLO, MULTIPLAYER, STORY, and RULES
 button_width = 10  # Reduced button width
@@ -201,14 +201,13 @@ def hide_solo_menu(event):
 root.bind("<Button-1>", hide_solo_menu)
 
 multiplayer_button = ttk.Button(root, text="MULTIPLAYER", command=start_multiplayer, width=button_width)
-multiplayer_button_window = canvas.create_window(window_width/2, 180, window=multiplayer_button)
+multiplayer_button_window = canvas.create_window(window_width/2, 160, window=multiplayer_button)  # Adjusted y position
 
 story_button = ttk.Button(root, text="STORY", command=show_story, width=button_width)
-story_button_window = canvas.create_window(window_width/2, 240, window=story_button)
+story_button_window = canvas.create_window(window_width/2, 200, window=story_button)  # Adjusted y position
 
 rules_button = ttk.Button(root, text="RULES", command=show_rules, width=button_width)
-rules_button_window = canvas.create_window(window_width/2, 300, window=rules_button)
-
+rules_button_window = canvas.create_window(window_width/2, 240, window=rules_button)  # Adjusted y position
 # Run the application
 root.mainloop()
 
