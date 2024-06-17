@@ -9,8 +9,8 @@ from multiplayer import MultiplayerBoard
 pygame.init()
 
 # Load sound files
-background_sound = pygame.mixer.Sound('background_music.mp3')
-click_sound = pygame.mixer.Sound('button_click.mp3')
+background_sound = pygame.mixer.Sound('resources/music/background_music.mp3')
+click_sound = pygame.mixer.Sound('resources/music/button_click.mp3')
 
 # Play background sound in a loop
 background_sound.play(loops=-1)
@@ -163,7 +163,7 @@ canvas = tk.Canvas(root, width=window_width, height=window_height)
 canvas.pack(fill="both", expand=True)
 
 # Load and prepare animated GIF for background
-background_gif = Image.open('background.gif')
+background_gif = Image.open('resources/images/background.gif')
 frames = [ImageTk.PhotoImage(frame) for frame in ImageSequence.Iterator(background_gif)]
 
 # Start animation

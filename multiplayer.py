@@ -36,7 +36,7 @@ class MultiplayerBoard:
         self.board_window.resizable(False, False)
 
         # Load background music
-        pygame.mixer.music.load("forest.mp3")
+        pygame.mixer.music.load("resources/music/forest.mp3")
         pygame.mixer.music.play(-1)
 
         # Create a frame for the game board and scoreboard
@@ -44,7 +44,7 @@ class MultiplayerBoard:
         main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         # Load background image for main_frame
-        background_image = Image.open("forest.jpg")
+        background_image = Image.open("resources/images/forest.jpg")
         frame_background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.ANTIALIAS))
         frame_background_label = tk.Label(main_frame, image=frame_background_photo)
         frame_background_label.image = frame_background_photo  # Store a reference to the image object
@@ -59,7 +59,7 @@ class MultiplayerBoard:
         self.scoreboard_frame.grid(row=0, column=1, padx=(10, 20), pady=0)
 
         # Load background image for scoreboard_frame
-        scoreboard_image = Image.open("score_board.png")
+        scoreboard_image = Image.open("resources/images/score_board.png")
         scoreboard_photo = ImageTk.PhotoImage(scoreboard_image.resize((200, 100), Image.ANTIALIAS))
         self.scoreboard_frame.create_image(0, 0, image=scoreboard_photo, anchor="nw")
         self.scoreboard_frame.image = scoreboard_photo  # Store a reference to the image object
@@ -76,11 +76,11 @@ class MultiplayerBoard:
         self.player_turn = [1]  # Use list to make it mutable in nested function
 
         # Load GIF frames
-        self.fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("fire.gif"))]
-        self.water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("water.gif"))]
-        self.forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("forest.gif"))]
-        self.tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("tiger.gif"))]
-        self.lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("lion.gif"))]
+        self.fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/fire.gif"))]
+        self.water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/water.gif"))]
+        self.forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/forest.gif"))]
+        self.tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/tiger.gif"))]
+        self.lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/lion.gif"))]
 
         # Create game board buttons
         self.buttons = [[None for _ in range(self.board_size)] for _ in range(self.board_size)]
