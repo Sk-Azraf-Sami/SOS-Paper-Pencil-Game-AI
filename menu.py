@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import font
 import pygame
 from PIL import Image, ImageTk, ImageSequence
-from mutiplayer import open_multiplayer_board
+from multiplayer import open_multiplayer_board
 
 # Initialize pygame for sound and animation
 pygame.init()
