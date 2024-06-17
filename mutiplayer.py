@@ -7,7 +7,7 @@ import pygame
 pygame.mixer.init()
 
 def open_multiplayer_board(root, player1, player2):
-    # Pause any background music from root
+        # Pause any background music from root
     pygame.mixer.music.pause()
 
     # Create a new top-level window
@@ -15,8 +15,8 @@ def open_multiplayer_board(root, player1, player2):
     board_window.title("SOS Multiplayer Board")
 
     # Set window size and position to match the main menu window
-    window_width = 1000  # Increased width to accommodate scoreboard
-    window_height = 600
+    window_width =  650# Increased width to accommodate scoreboard
+    window_height = 400
 
     # Get the screen dimension
     screen_width = root.winfo_screenwidth()
@@ -30,13 +30,6 @@ def open_multiplayer_board(root, player1, player2):
     board_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
     board_window.resizable(False, False)
 
-    # Load background image
-    background_image = Image.open("forest.jpg")
-    background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.ANTIALIAS))
-    background_label = tk.Label(board_window, image=background_photo)
-    background_label.image = background_photo  # Store a reference to the image object
-    background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
     # Load background music
     pygame.mixer.music.load("forest.mp3")
     pygame.mixer.music.play(-1)
@@ -45,6 +38,13 @@ def open_multiplayer_board(root, player1, player2):
     main_frame = ttk.Frame(board_window, style="Custom.TFrame")
     main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
+    # Load background image for main_frame
+    background_image = Image.open("forest.jpg")
+    frame_background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.ANTIALIAS))
+    frame_background_label = tk.Label(main_frame, image=frame_background_photo)
+    frame_background_label.image = frame_background_photo  # Store a reference to the image object
+    frame_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
     # Create a frame for the game board
     board_frame = ttk.Frame(main_frame, style="Custom.TFrame")
     board_frame.grid(row=0, column=0, padx=(20, 10), pady=20)
@@ -52,6 +52,13 @@ def open_multiplayer_board(root, player1, player2):
     # Create a frame for the scoreboard
     scoreboard_frame = ttk.Frame(main_frame, style="Custom.TFrame")
     scoreboard_frame.grid(row=0, column=1, padx=(10, 20), pady=20)
+
+    # Load background image for scoreboard_frame
+    scoreboard_image = Image.open("score_board.png")
+    scoreboard_photo = ImageTk.PhotoImage(scoreboard_image.resize((window_width // 3, window_height), Image.ANTIALIAS))
+    scoreboard_background_label = tk.Label(scoreboard_frame, image=scoreboard_photo)
+    scoreboard_background_label.image = scoreboard_photo  # Store a reference to the image object
+    scoreboard_background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
     # Load custom font
     digital7_font = ("Digital-7", 20)
@@ -70,15 +77,15 @@ def open_multiplayer_board(root, player1, player2):
     player2_label.set(f"Player 2: {player2}")
 
     # Create labels with label variables and initial color
-    player1_name_label = tk.Label(scoreboard_frame, textvariable=player1_label, fg="red", font=modern_font, bg="forestgreen")
+    player1_name_label = tk.Label(scoreboard_frame, textvariable=player1_label, fg="red", font=modern_font)
     player1_name_label.grid(row=0, column=0, pady=(0, 10))
-    player2_name_label = tk.Label(scoreboard_frame, textvariable=player2_label, fg="black", font=modern_font, bg="forestgreen")
+    player2_name_label = tk.Label(scoreboard_frame, textvariable=player2_label, fg="black", font=modern_font)
     player2_name_label.grid(row=1, column=0, pady=(0, 10))
 
     # Score displays
-    player1_score_label = tk.Label(scoreboard_frame, textvariable=player1_score, font=digital7_font, bg="forestgreen")
+    player1_score_label = tk.Label(scoreboard_frame, textvariable=player1_score, font=digital7_font)
     player1_score_label.grid(row=0, column=1, padx=20, pady=(0, 10))
-    player2_score_label = tk.Label(scoreboard_frame, textvariable=player2_score, font=digital7_font, bg="forestgreen")
+    player2_score_label = tk.Label(scoreboard_frame, textvariable=player2_score, font=digital7_font)
     player2_score_label.grid(row=1, column=1, padx=20, pady=(0, 10))
 
     board_size = 6
@@ -91,7 +98,6 @@ def open_multiplayer_board(root, player1, player2):
     forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("forest.gif"))]
     tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("tiger.gif"))]
     lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("lion.gif"))]
-
     def check_sos(row, col, char):
         found_sos = False
         sos_positions = []
