@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import font
 import pygame
 from PIL import Image, ImageTk, ImageSequence
-from multiplayer import open_multiplayer_board
+from multiplayer import MultiplayerBoard
 
 # Initialize pygame for sound and animation
 pygame.init()
@@ -133,6 +133,10 @@ def show_rules():
     )
 
     tk.Label(rules_window, text=rules_text, wraplength=380).pack(pady=10)
+
+# Function to open multiplayer board
+def open_multiplayer_board(root, player1, player2):
+    MultiplayerBoard(root, player1, player2)
 
 # Create main window
 root = tk.Tk()
