@@ -124,9 +124,18 @@ class MultiplayerBoard:
         button.animation_id = animation_id  # Store the animation ID
 
     def handle_click(self, event, row, col):
-        current_player = self.player_turn[0]
-        char = 'S' if current_player == 1 else 'O'
-        frames = self.fire_frames if char == 'S' else self.water_frames
+        if event is None:
+        # Handle the case where event is None
+            char = 'S'
+            frames = self.fire_frames
+        elif event.num == 1:
+            char = 'S'
+            frames = self.fire_frames
+        elif event.num == 3:
+            char = 'O'
+            frames = self.water_frames
+        else:
+            return
 
         if self.board[row][col] == '':
             # Stop the forest GIF animation
@@ -137,7 +146,7 @@ class MultiplayerBoard:
             self.board[row][col] = char
             self.update_button_image(self.buttons[row][col], frames)
             if not self.check_winner(row, col, char):
-                self.player_turn[0] = 2 if current_player == 1 else 1
+                self.player_turn[0] = 2 if self.player_turn[0] == 1 else 1
                 self.update_scoreboard()  # Update the scoreboard to reflect the turn change
             self.check_game_end()
 
@@ -204,13 +213,30 @@ class MultiplayerBoard:
         if all(cell != '' for row in self.board for cell in row):
             if self.player1_score > self.player2_score:
                 winner = self.player1
+                emoji = "🎉🎊"
             elif self.player2_score > self.player1_score:
                 winner = self.player2
+                emoji = "🏆🥳"
             else:
                 winner = "No one, it's a tie!"
-            messagebox.showinfo("Game Over", f"Game Over! The winner is: {winner}")
+                emoji = "😮😅"
+
+            # Stop background music and play winner music
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load("resources/music/winner.mp3")
+            pygame.mixer.music.play()
+
+            # Show a fun message box with the winner
+            self.show_winner_message(winner, emoji)
+            
             self.board_window.destroy()
             self.root.destroy()
+
+    def show_winner_message(self, winner, emoji):
+        try:
+            messagebox.showinfo("Game Over", f"{emoji} Game Over! The winner is: {winner} {emoji}")
+        except:
+            pass  # Prevent crash if messagebox fails
 
 def open_multiplayer_board(root, player1, player2):
     MultiplayerBoard(root, player1, player2)
