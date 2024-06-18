@@ -1,8 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
 
 tooltip_window = None
+
 def show_tooltip(event, text):
     global tooltip_window
     if tooltip_window or not text:
@@ -30,5 +29,3 @@ def hide_tooltip(event):
 def bind_tooltip(widget, text):
     widget.bind("<Enter>", lambda event: show_tooltip(event, text))
     widget.bind("<Leave>", hide_tooltip)
-
-
