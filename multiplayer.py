@@ -1,8 +1,9 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 from PIL import Image, ImageTk, ImageSequence
 import pygame
-from sos_game_utils import bind_tooltip
+from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, handle_click, check_winner, check_game_end
+from sos_game_utils import player1_score, player2_score, player_turn, bind_tooltip
 
 pygame.mixer.init()
 
@@ -10,9 +11,6 @@ pygame.mixer.init()
 tooltip_window = None
 board_window = None
 buttons = []
-player1_score = 0
-player2_score = 0
-player_turn = [1]
 board = []
 fire_frames = []
 water_frames = []
@@ -22,151 +20,9 @@ lion_frames = []
 player1 = "Player 1"
 player2 = "Player 2"
 
-
-def update_scoreboard():
-    global player1_score, player2_score, player_turn, scoreboard_frame
-
-    scoreboard_frame.delete("all")  # Clear the canvas
-    scoreboard_frame.create_image(0, 0, image=scoreboard_frame.image, anchor="nw")  # Redraw background image
-
-    # Change player names' color based on the turn
-    player1_color = "#FBF6EE" if player_turn[0] == 1 else "black"
-    player2_color = "#FBF6EE" if player_turn[0] == 2 else "black"
-
-    scoreboard_frame.create_text(100, 20, text=f"{player1}: {player1_score}", fill=player1_color, font=("PlaywriteNO", 12, "bold"))
-    scoreboard_frame.create_text(100, 60, text=f"{player2}: {player2_score}", fill=player2_color, font=("PlaywriteNO", 12, "bold"))
-
-def increment_score(player):
-    global player1_score, player2_score
-    if player == 1:
-        player1_score += 1
-    elif player == 2:
-        player2_score += 1
-    update_scoreboard()
-
-def update_button_image(button, frames, index=0):
-    global board_window
-    button.config(image=frames[index])
-    animation_id = board_window.after(100, update_button_image, button, frames, (index + 1) % len(frames))
-    button.animation_id = animation_id  # Store the animation ID
-
-def handle_click(event, row, col):
-    global buttons, board, player_turn, player1_score, player2_score, fire_frames, water_frames, tiger_frames, lion_frames
-
-    if event is None or event.num == 1:
-        char = 'S'
-        frames = fire_frames
-    elif event.num == 3:
-        char = 'O'
-        frames = water_frames
-    else:
-        return
-
-    if board[row][col] == '':
-        if buttons[row][col].animation_id:
-            board_window.after_cancel(buttons[row][col].animation_id)
-            buttons[row][col].animation_id = None
-
-        board[row][col] = char
-        update_button_image(buttons[row][col], frames)
-
-        tooltip_text = "Fire" if char == 'S' else "Water"
-        bind_tooltip(buttons[row][col], tooltip_text)
-
-        if not check_winner(row, col, char):
-            player_turn[0] = 2 if player_turn[0] == 1 else 1
-            update_scoreboard()
-        check_game_end()
-
-def check_sos(row, col, char):
-    found_sos = False
-    sos_positions = []
-    board_size = 6
-
-    for i in range(-2, 1):
-        if (0 <= row + i < board_size - 2 and
-            board[row + i][col] == 'S' and
-            board[row + i + 1][col] == 'O' and
-            board[row + i + 2][col] == 'S'):
-            found_sos = True
-            sos_positions.extend([(row + i, col), (row + i + 1, col), (row + i + 2, col)])
-        if (0 <= col + i < board_size - 2 and
-            board[row][col + i] == 'S' and
-            board[row][col + i + 1] == 'O' and
-            board[row][col + i + 2] == 'S'):
-            found_sos = True
-            sos_positions.extend([(row, col + i), (row, col + i + 1), (row, col + i + 2)])
-
-    for i in range(-2, 1):
-        if (0 <= row + i < board_size - 2 and 0 <= col + i < board_size - 2 and
-            board[row + i][col + i] == 'S' and
-            board[row + i + 1][col + i + 1] == 'O' and
-            board[row + i + 2][col + i + 2] == 'S'):
-            found_sos = True
-            sos_positions.extend([(row + i, col + i), (row + i + 1, col + i + 1), (row + i + 2, col + i + 2)])
-        if (0 <= row - i < board_size - 2 and 0 <= col + i < board_size - 2 and
-            board[row - i][col + i] == 'S' and
-            board[row - i - 1][col + i + 1] == 'O' and
-            board[row - i - 2][col + i + 2] == 'S'):
-            found_sos = True
-            sos_positions.extend([(row - i, col + i), (row - i - 1, col + i + 1), (row - i - 2, col + i + 2)])
-
-    return found_sos, sos_positions
-
-def check_winner(row, col, char):
-    global buttons, player_turn, player1_score, player2_score, tiger_frames, lion_frames
-
-    found_sos, sos_positions = check_sos(row, col, char)
-    if found_sos:
-        current_player = player_turn[0]
-        frames = tiger_frames if current_player == 1 else lion_frames
-        for pos in sos_positions:
-            r, c = pos
-            if buttons[r][c].animation_id:
-                board_window.after_cancel(buttons[r][c].animation_id)
-                buttons[r][c].animation_id = None
-            update_button_image(buttons[r][c], frames)
-
-        if current_player == 1:
-            player1_score += 1
-        else:
-            player2_score += 1
-        update_scoreboard()
-        return True
-    return False
-
-def check_game_end():
-    global board, player1_score, player2_score, player1, player2, board_window, root
-
-    if all(cell != '' for row in board for cell in row):
-        if player1_score > player2_score:
-            winner = player1
-            emoji = "🎉🎊"
-        elif player2_score > player1_score:
-            winner = player2
-            emoji = "🏆🥳"
-        else:
-            winner = "No one, it's a tie!"
-            emoji = "😮😅"
-
-        pygame.mixer.music.stop()
-        pygame.mixer.music.load("resources/music/winner.mp3")
-        pygame.mixer.music.play()
-
-        show_winner_message(winner, emoji)
-        
-        board_window.destroy()
-        root.destroy()
-
-def show_winner_message(winner, emoji):
-    try:
-        messagebox.showinfo("Game Over", f"{emoji} Game Over! The winner is: {winner} {emoji}")
-    except:
-        pass  # Prevent crash if messagebox fails
-
 def open_multiplayer_board(root_window, p1, p2):
     global board_window, player1, player2, board_size, board, buttons, scoreboard_frame
-    global fire_frames, water_frames, forest_frames, tiger_frames, lion_frames, player_turn
+    global fire_frames, water_frames, forest_frames, tiger_frames, lion_frames
 
     player1 = p1
     player2 = p2
@@ -211,7 +67,7 @@ def open_multiplayer_board(root_window, p1, p2):
     scoreboard_frame.create_image(0, 0, image=scoreboard_photo, anchor="nw")
     scoreboard_frame.image = scoreboard_photo
 
-    update_scoreboard()
+    update_scoreboard(scoreboard_frame, player1, player2)
 
     board_size = 6
     board = [['' for _ in range(board_size)] for _ in range(board_size)]
@@ -225,13 +81,15 @@ def open_multiplayer_board(root_window, p1, p2):
     buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
     for row in range(board_size):
         for col in range(board_size):
-            button = ttk.Button(board_frame, text='', width=5, command=lambda r=row, c=col: handle_click(None, r, c))
+            button = ttk.Button(board_frame, text='', width=5, command=lambda r=row, c=col: handle_click(None, r, c, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root_window, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
+            
             button.grid(row=row, column=col, padx=5, pady=5)
             button.config(image=forest_frames[0])
             button.animation_id = None
-            update_button_image(button, forest_frames)
-            button.bind('<Button-1>', lambda event, r=row, c=col: handle_click(event, r, c))
-            button.bind('<Button-3>', lambda event, r=row, c=col: handle_click(event, r, c))
+            update_button_image(button, forest_frames, board_window)
+            button.bind('<Button-1>', lambda event, r=row, c=col: handle_click(event, r, c, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root_window, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
+
+            button.bind('<Button-3>', lambda event, r=row, c=col: handle_click(event, r, c, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root_window, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
             buttons[row][col] = button
 
             bind_tooltip(button, "")
