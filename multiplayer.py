@@ -68,12 +68,13 @@ class MultiplayerBoard:
         self.player1_score = 0
         self.player2_score = 0
 
+        self.player_turn = [1]  # Initialize player_turn before updating the scoreboard
+
         # Display initial scoreboard
         self.update_scoreboard()
 
         self.board_size = 6
         self.board = [['' for _ in range(self.board_size)] for _ in range(self.board_size)]
-        self.player_turn = [1]  # Use list to make it mutable in nested function
 
         # Load GIF frames
         self.fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/fire.gif"))]
@@ -101,8 +102,13 @@ class MultiplayerBoard:
     def update_scoreboard(self):
         self.scoreboard_frame.delete("all")  # Clear the canvas
         self.scoreboard_frame.create_image(0, 0, image=self.scoreboard_frame.image, anchor="nw")  # Redraw background image
-        self.scoreboard_frame.create_text(100, 20, text=f"{self.player1}: {self.player1_score}", fill="red", font=("PlaywriteNO", 12, "bold"))
-        self.scoreboard_frame.create_text(100, 60, text=f"{self.player2}: {self.player2_score}", fill="black", font=("PlaywriteNO", 12, "bold"))
+
+        # Change player names' color based on the turn
+        player1_color = "#FBF6EE" if self.player_turn[0] == 1 else "black"
+        player2_color = "#FBF6EE" if self.player_turn[0] == 2 else "black"
+
+        self.scoreboard_frame.create_text(100, 20, text=f"{self.player1}: {self.player1_score}", fill=player1_color, font=("PlaywriteNO", 12, "bold"))
+        self.scoreboard_frame.create_text(100, 60, text=f"{self.player2}: {self.player2_score}", fill=player2_color, font=("PlaywriteNO", 12, "bold"))
 
     def increment_score(self, player):
         if player == 1:
@@ -132,6 +138,7 @@ class MultiplayerBoard:
             self.update_button_image(self.buttons[row][col], frames)
             if not self.check_winner(row, col, char):
                 self.player_turn[0] = 2 if current_player == 1 else 1
+                self.update_scoreboard()  # Update the scoreboard to reflect the turn change
             self.check_game_end()
 
     def check_sos(self, row, col, char):
