@@ -6,6 +6,36 @@ import pygame
 
 pygame.mixer.init()
 
+class Tooltip:
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tooltip_window = None
+        widget.bind("<Enter>", self.show_tooltip)
+        widget.bind("<Leave>", self.hide_tooltip)
+
+    def show_tooltip(self, event):
+        if self.tooltip_window or not self.text:
+            return
+
+        x, y, _, _ = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 25
+        y += self.widget.winfo_rooty() + 25
+
+        self.tooltip_window = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+
+        label = tk.Label(tw, text=self.text, justify='left',
+                         background="#ffffe0", relief='solid', borderwidth=1,
+                         font=("tahoma", "8", "normal"))
+        label.pack(ipadx=1)
+
+    def hide_tooltip(self, event):
+        if self.tooltip_window:
+            self.tooltip_window.destroy()
+            self.tooltip_window = None
+
 class MultiplayerBoard:
     def __init__(self, root, player1, player2):
         self.root = root
@@ -96,6 +126,10 @@ class MultiplayerBoard:
                 button.bind('<Button-3>', lambda event, r=row, c=col: self.handle_click(event, r, c))
                 self.buttons[row][col] = button
 
+                # Add tooltip to the button with an empty string
+                tooltip_text = ""
+                Tooltip(button, tooltip_text)
+
         # Ensure the root window is destroyed when the board window is closed
         self.board_window.protocol("WM_DELETE_WINDOW", root.destroy)
 
@@ -145,6 +179,11 @@ class MultiplayerBoard:
 
             self.board[row][col] = char
             self.update_button_image(self.buttons[row][col], frames)
+            
+            # Update the tooltip text based on the character placed
+            tooltip_text = "Fire" if char == 'S' else "Water"
+            self.buttons[row][col].tooltip = Tooltip(self.buttons[row][col], tooltip_text)
+
             if not self.check_winner(row, col, char):
                 self.player_turn[0] = 2 if self.player_turn[0] == 1 else 1
                 self.update_scoreboard()  # Update the scoreboard to reflect the turn change
@@ -185,6 +224,7 @@ class MultiplayerBoard:
                 sos_positions.extend([(row - i, col + i), (row - i - 1, col + i + 1), (row - i - 2, col + i + 2)])
 
         return found_sos, sos_positions
+
 
     def check_winner(self, row, col, char):
         found_sos, sos_positions = self.check_sos(row, col, char)
