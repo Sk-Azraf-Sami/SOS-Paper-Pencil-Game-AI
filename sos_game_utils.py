@@ -7,8 +7,6 @@ import pygame
 tooltip_window = None
 board_window = None
 buttons = []
-player1_score = 0
-player2_score = 0
 player_turn = [1]
 board = []
 fire_frames = []
@@ -18,6 +16,10 @@ tiger_frames = []
 lion_frames = []
 player1 = "Player 1"
 player2 = "Player 2"
+
+global player1_score, player2_score
+player1_score = 0
+player2_score = 0
 
 def show_tooltip(event, text):
     global tooltip_window
@@ -160,6 +162,8 @@ def check_winner(row, col, char, board, buttons, player_turn, board_window, upda
 
 def check_game_end(board, player1_score, player2_score, board_window, root, player1, player2):
     if all(cell != '' for row in board for cell in row):
+        print(player1_score)
+        print(player2_score)
         if player1_score > player2_score:
             winner = player1
             emoji = "🎉🎊"
@@ -181,3 +185,32 @@ def check_game_end(board, player1_score, player2_score, board_window, root, play
 
 def show_winner_message(winner, emoji):
     messagebox.showinfo("Game Over", f"{winner} wins the game! {emoji}")
+    
+
+def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move):
+    if event is None or event.num == 1:
+        char = 'S'
+        frames = fire_frames
+    elif event.num == 3:
+        char = 'O'
+        frames = water_frames
+    else:
+        return
+
+    if board[row][col] == '':
+        if buttons[row][col].animation_id:
+            board_window.after_cancel(buttons[row][col].animation_id)
+            buttons[row][col].animation_id = None
+
+        board[row][col] = char
+        update_button_image(buttons[row][col], frames, board_window)
+
+        tooltip_text = "Fire" if char == 'S' else "Water"
+        bind_tooltip(buttons[row][col], tooltip_text)
+
+        if not check_winner(row, col, char, board, buttons, player_turn, board_window, update_button_image, tiger_frames, lion_frames, update_scoreboard, root):
+            player_turn[0] = 2 if player_turn[0] == 1 else 1
+            update_scoreboard(scoreboard_frame, player1, player2)
+            ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
+        check_game_end(board, player1_score, player2_score, board_window, root, player1, player2)
+
