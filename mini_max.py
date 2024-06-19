@@ -21,63 +21,121 @@ player2 = "Player 2"
 import random
 
 def evaluate_board(board):
-    # This is a simple heuristic that could be improved
-    return player2_score - player1_score
+    score = 0
+    for row in range(len(board)):
+        for col in range(len(board[0])):
+            if board[row][col] == 'S':
+                if col + 2 < len(board[0]) and board[row][col + 1] == 'O' and board[row][col + 2] == 'S':
+                    score += 1
+                if row + 2 < len(board) and board[row + 1][col] == 'O' and board[row + 2][col] == 'S':
+                    score += 1
+                if row + 2 < len(board) and col + 2 < len(board[0]) and board[row + 1][col + 1] == 'O' and board[row + 2][col + 2] == 'S':
+                    score += 1
+                if row + 2 < len(board) and col - 2 >= 0 and board[row + 1][col - 1] == 'O' and board[row + 2][col - 2] == 'S':
+                    score += 1
+            elif board[row][col] == 'O':
+                if col - 1 >= 0 and col + 1 < len(board[0]) and board[row][col - 1] == 'S' and board[row][col + 1] == 'S':
+                    score += 1
+                if row - 1 >= 0 and row + 1 < len(board) and board[row - 1][col] == 'S' and board[row + 1][col] == 'S':
+                    score += 1
+                if row - 1 >= 0 and row + 1 < len(board) and col - 1 >= 0 and col + 1 < len(board[0]) and board[row - 1][col - 1] == 'S' and board[row + 1][col + 1] == 'S':
+                    score += 1
+                if row - 1 >= 0 and row + 1 < len(board) and col + 1 < len(board[0]) and col - 1 >= 0 and board[row - 1][col + 1] == 'S' and board[row + 1][col - 1] == 'S':
+                    score += 1
+    return score
 
-def get_possible_moves(board):
-    return [(i, j) for i in range(board_size) for j in range(board_size) if board[i][j] == '']
+def is_moves_left(board):
+    for row in board:
+        if '' in row:
+            return True
+    return False
 
-def minimax(board,scoreboard_frame, depth, alpha, beta, is_maximizing, player1_score, player2_score, board_window, root, player1, player2):
-    if depth == 0 or check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2):
-        return evaluate_board(board)
+def mini_max(board, depth, is_max, alpha, beta, max_depth):
+    score = evaluate_board(board)
 
-    possible_moves = get_possible_moves(board)
+    if score >= 1 or depth == max_depth:
+        return score - depth
 
-    if is_maximizing:
-        max_eval = float('-inf')
-        for move in possible_moves:
-            board_copy = [row.copy() for row in board]
-            board_copy[move[0]][move[1]] = 'O'  # AI always plays 'O'
-            if check_sos(board_copy, move[0], move[1], 'O')[0]:
-                player2_score += 1
-            eval = minimax(board_copy, scoreboard_frame, depth - 1, alpha, beta, False, player1_score, player2_score, board_window, root, player1, player2)
-            max_eval = max(max_eval, eval)
-            alpha = max(alpha, eval)
-            if beta <= alpha:
-                break
-        return max_eval
+    if not is_moves_left(board):
+        return 0
+
+    if is_max:
+        best = -1000
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == '':
+                    board[i][j] = 'S'
+                    best = max(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
+                    board[i][j] = ''
+                    alpha = max(alpha, best)
+                    if beta <= alpha:
+                        break
+
+                    board[i][j] = 'O'
+                    best = max(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
+                    board[i][j] = ''
+                    alpha = max(alpha, best)
+                    if beta <= alpha:
+                        break
+        return best
     else:
-        min_eval = float('inf')
-        for move in possible_moves:
-            board_copy = [row.copy() for row in board]
-            board_copy[move[0]][move[1]] = 'S'  # Human always plays 'S'
-            if check_sos(board_copy, move[0], move[1], 'S')[0]:
-                player1_score += 1
-            eval = minimax(board_copy, scoreboard_frame, depth - 1, alpha, beta, True, player1_score, player2_score, board_window, root, player1, player2)
-            min_eval = min(min_eval, eval)
-            beta = min(beta, eval)
-            if beta <= alpha:
-                break
-        return min_eval
+        best = 1000
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == '':
+                    board[i][j] = 'S'
+                    best = min(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
+                    board[i][j] = ''
+                    beta = min(beta, best)
+                    if beta <= alpha:
+                        break
+
+                    board[i][j] = 'O'
+                    best = min(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
+                    board[i][j] = ''
+                    beta = min(beta, best)
+                    if beta <= alpha:
+                        break
+        return best
+
+def find_best_move(board, max_depth):
+    best_val = -1000
+    best_move = (-1, -1)
+    best_char = 'S'
+
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            if board[i][j] == '':
+                board[i][j] = 'S'
+                move_val = mini_max(board, 0, False, -1000, 1000, max_depth)
+                board[i][j] = ''
+
+                if move_val > best_val:
+                    best_move = (i, j)
+                    best_val = move_val
+                    best_char = 'S'
+
+                board[i][j] = 'O'
+                move_val = mini_max(board, 0, False, -1000, 1000, max_depth)
+                board[i][j] = ''
+
+                if move_val > best_val:
+                    best_move = (i, j)
+                    best_val = move_val
+                    best_char = 'O'
+
+    return best_move, best_char
 
 def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
-    global player1_score, player2_score
     if player_turn[0] == 2:  # AI's turn (player 2)
-        possible_moves = get_possible_moves(board)
-        best_score = float('-inf')
-        best_move = None
-        for move in possible_moves:
-            board_copy = [row.copy() for row in board]
-            board_copy[move[0]][move[1]] = 'O'  # AI always plays 'O'
-            if check_sos(board_copy, move[0], move[1], 'O')[0]:
-                player2_score += 1
-            score = minimax(board_copy,scoreboard_frame, 1, float('-inf'), float('inf'), False, player1_score, player2_score, board_window, root, player1, player2)  # Adjust depth as needed
-            if score > best_score:
-                best_score = score
-                best_move = move
-        handle_click_ai(None, best_move[0], best_move[1], board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
-        if check_sos(board, best_move[0], best_move[1], 'O')[0]:  # Check if AI made 'SOS'
-            ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
+        max_depth = 1  # Set a lower depth limit
+        best_move, best_char = find_best_move(board, max_depth)
+        if best_move != (-1, -1):
+            row, col = best_move
+            handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
+
 
 def open_multiplayer_board(root_window, p1, p2):
     global board_window, player1, player2, board_size, board, buttons, scoreboard_frame
