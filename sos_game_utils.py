@@ -131,7 +131,7 @@ def handle_click(event, row, col, board, buttons, fire_frames, water_frames,tige
         if not check_winner(row, col, char, board, buttons, player_turn, board_window, update_button_image, tiger_frames, lion_frames, update_scoreboard, root):
             player_turn[0] = 2 if player_turn[0] == 1 else 1
             update_scoreboard(scoreboard_frame, player1, player2)
-        check_game_end(board, player1_score, player2_score, board_window, root, player1, player2)
+        check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2)
 
 def check_winner(row, col, char, board, buttons, player_turn, board_window, update_button_image, tiger_frames, lion_frames, update_scoreboard, root):
     global player1_score, player2_score
@@ -155,7 +155,8 @@ def check_winner(row, col, char, board, buttons, player_turn, board_window, upda
         return True
     return False
 
-def check_game_end(board, player1_score, player2_score, board_window, root, player1, player2):
+def check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2):
+    update_scoreboard(scoreboard_frame, player1, player2)
     if all(cell != '' for row in board for cell in row):
         print(player1_score)
         print(player2_score)
@@ -210,4 +211,4 @@ def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, 
             if ai_make_move and player_turn[0] == 2:
                 board_window.after(500, lambda: ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
                 
-        check_game_end(board, player1_score, player2_score, board_window, root, player1, player2)
+        check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2)
