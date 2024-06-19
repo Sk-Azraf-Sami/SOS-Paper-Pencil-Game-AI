@@ -205,13 +205,17 @@ def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, 
         tooltip_text = "Fire" if char == 'S' else "Water"
         bind_tooltip(buttons[row][col], tooltip_text)
 
+        # Check for "SOS" and update the score
         if not check_winner(row, col, char, board, buttons, player_turn, board_window, update_button_image, tiger_frames, lion_frames, update_scoreboard, root):
             player_turn[0] = 2 if player_turn[0] == 1 else 1
             update_scoreboard(scoreboard_frame, player1, player2)
             
-            # ai move.......................
+            # AI move
             if ai_make_move and player_turn[0] == 2:
                 board_window.after(500, lambda: ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
-            #......................
-               
+        else:
+            # Allow AI to make another move if it created "SOS"
+            if player_turn[0] == 2 and ai_make_move:
+                board_window.after(500, lambda: ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
+
         check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2)
