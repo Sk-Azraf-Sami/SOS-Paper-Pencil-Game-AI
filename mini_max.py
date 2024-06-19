@@ -130,7 +130,7 @@ def find_best_move(board, max_depth):
 
 def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
     if player_turn[0] == 2:  # AI's turn (player 2)
-        max_depth = 1  # Set a lower depth limit
+        max_depth = 3  # Set a lower depth limit
         best_move, best_char = find_best_move(board, max_depth)
         if best_move != (-1, -1):
             row, col = best_move
