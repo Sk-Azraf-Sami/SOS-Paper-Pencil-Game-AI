@@ -157,7 +157,7 @@ def apply_mini_max_algorithm(root_window, p1, p2):
     pygame.mixer.music.pause()
 
     board_window = tk.Toplevel(root_window)
-    board_window.title("SOS Multiplayer Board")
+    board_window.title("SOS-VERY HARD MODE")
 
     window_width = 580
     window_height = 380
@@ -177,7 +177,7 @@ def apply_mini_max_algorithm(root_window, p1, p2):
     main_frame = ttk.Frame(board_window, style="Custom.TFrame")
     main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-    background_image = Image.open("resources/images/forest.jpg")
+    background_image = Image.open("resources/images/background_very_hard.jpg")
     frame_background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.ANTIALIAS))
     frame_background_label = tk.Label(main_frame, image=frame_background_photo)
     frame_background_label.image = frame_background_photo
@@ -202,8 +202,8 @@ def apply_mini_max_algorithm(root_window, p1, p2):
     fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/fire.gif"))]
     water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/water.gif"))]
     forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/forest.gif"))]
-    tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/tiger.gif"))]
-    lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/lion.gif"))]
+    tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/human.gif"))]
+    lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/robot.gif"))]
 
     buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
     for row in range(board_size):

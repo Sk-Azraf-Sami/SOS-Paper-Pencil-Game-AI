@@ -29,17 +29,21 @@ def select_difficulty(difficulty):
     stop_background_sound()  # Stop background sound before opening the next GUI
     print(f"Selected difficulty: {difficulty}")
     if difficulty == "Easy":
-        from fuzzy_logic import open_fuzzy_logic_gui
-        open_fuzzy_logic_gui(root, "Human", "AI")
+        root.withdraw()
+        from fuzzy_logic import apply_fuzzy_logic
+        apply_fuzzy_logic(root, "HUMAN", "ROBOT")
     elif difficulty == "Medium":
+        root.withdraw()
         from genetic_algorithm import apply_genetic_algorithm
-        apply_genetic_algorithm(root, "Human", "AI")
+        apply_genetic_algorithm(root, "HUMAN", "ROBOT")
     elif difficulty == "Hard":
-        from a_star import open_a_star_gui
-        open_a_star_gui(root, "Human", "AI")
+        root.withdraw()
+        from a_star import apply_a_star
+        apply_a_star(root, "HUMAN", "ROBOT")
     elif difficulty == "Very Hard":
+        root.withdraw()
         from mini_max import apply_mini_max_algorithm
-        apply_mini_max_algorithm(root, "Human", "AI")
+        apply_mini_max_algorithm(root, "HUMAN", "ROBOT")
 
 # Function to prompt player names for multiplayer mode
 def prompt_player_names():
@@ -140,16 +144,12 @@ def show_rules():
 
     tk.Label(rules_window, text=rules_text, wraplength=380).pack(pady=10)
 
-# Function to open multiplayer board
-def open_multiplayer_board(root, player1, player2):
-    open_multiplayer_board(root, player1, player2)
-
 # Create main window
 root = tk.Tk()
 root.title("Game Mode Selection")
 
 window_width = 400
-window_height = 350
+window_height = 320
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 center_x = int(screen_width / 2 - window_width / 2)

@@ -50,7 +50,7 @@ def open_multiplayer_board(root_window, p1, p2):
     main_frame = ttk.Frame(board_window, style="Custom.TFrame")
     main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-    background_image = Image.open("resources/images/forest.jpg")
+    background_image = Image.open("resources/images/background_multiplayer.jpg")
     frame_background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.ANTIALIAS))
     frame_background_label = tk.Label(main_frame, image=frame_background_photo)
     frame_background_label.image = frame_background_photo
