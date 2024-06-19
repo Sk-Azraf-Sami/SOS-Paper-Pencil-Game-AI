@@ -147,7 +147,7 @@ def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_f
 
 
 
-def open_multiplayer_board(root_window, p1, p2):
+def apply_mini_max_algorithm(root_window, p1, p2):
     global board_window, player1, player2, board_size, board, buttons, scoreboard_frame
     global fire_frames, water_frames, forest_frames, tiger_frames, lion_frames
 
@@ -226,5 +226,5 @@ def open_multiplayer_board(root_window, p1, p2):
 if __name__ == "__main__":
     root = tk.Tk()
     root.option_add("*Font", "Digital-7 12")
-    open_multiplayer_board(root, "Player 1", "Player 2")
+    apply_mini_max_algorithm(root, "Player 1", "Player 2")
     root.mainloop()

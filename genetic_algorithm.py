@@ -117,14 +117,14 @@ def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_f
                     break
 
 
-def open_multiplayer_board(root_window, p1, p2):
+def apply_genetic_algorithm(root_window, p1, p2):
     global board_window, player1, player2, board_size, board, buttons, scoreboard_frame
     global fire_frames, water_frames, forest_frames, tiger_frames, lion_frames
 
     player1 = p1
     player2 = p2
 
-    pygame.mixer.music.pause()
+    pygame.mixer.music.stop()  # Stop the background music of the root window
 
     board_window = tk.Toplevel(root_window)
     board_window.title("SOS Multiplayer Board")
@@ -196,5 +196,5 @@ def open_multiplayer_board(root_window, p1, p2):
 if __name__ == "__main__":
     root = tk.Tk()
     root.option_add("*Font", "Digital-7 12")
-    open_multiplayer_board(root, "Player 1", "Player 2")
+    apply_genetic_algorithm(root, "Player 1", "Player 2")
     root.mainloop()

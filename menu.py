@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import font
 import pygame
 from PIL import Image, ImageTk, ImageSequence
-from multiplayer import MultiplayerBoard
+from multiplayer import open_multiplayer_board
 
 # Initialize pygame for sound and animation
 pygame.init()
@@ -19,22 +19,27 @@ background_sound.play(loops=-1)
 def play_click_sound():
     click_sound.play()
 
+# Function to stop background sound
+def stop_background_sound():
+    background_sound.stop()
+
 # Function to select difficulty and open the corresponding GUI
 def select_difficulty(difficulty):
     play_click_sound()
+    stop_background_sound()  # Stop background sound before opening the next GUI
     print(f"Selected difficulty: {difficulty}")
     if difficulty == "Easy":
         from fuzzy_logic import open_fuzzy_logic_gui
         open_fuzzy_logic_gui(root, "Human", "AI")
     elif difficulty == "Medium":
-        from genetic_algorithm import open_genetic_algorithm_gui
-        open_genetic_algorithm_gui(root, "Human", "AI")
+        from genetic_algorithm import apply_genetic_algorithm
+        apply_genetic_algorithm(root, "Human", "AI")
     elif difficulty == "Hard":
         from a_star import open_a_star_gui
         open_a_star_gui(root, "Human", "AI")
     elif difficulty == "Very Hard":
-        from mini_max import open_mini_max
-        open_mini_max(root, "Human", "AI")
+        from mini_max import apply_mini_max_algorithm
+        apply_mini_max_algorithm(root, "Human", "AI")
 
 # Function to prompt player names for multiplayer mode
 def prompt_player_names():
@@ -56,6 +61,7 @@ def prompt_player_names():
     player1_entry.pack(pady=5)
 
     tk.Label(player_name_window, text="Player 2 Name:").pack(pady=5)
+
     player2_entry = ttk.Entry(player_name_window)
     player2_entry.pack(pady=5)
 
@@ -65,7 +71,7 @@ def prompt_player_names():
         player2 = player2_entry.get()
         player_name_window.destroy()
         # Stop background music and withdraw root window before opening multiplayer board
-        background_sound.stop()
+        stop_background_sound()
         root.withdraw()
         open_multiplayer_board(root, player1, player2)
 
@@ -136,7 +142,7 @@ def show_rules():
 
 # Function to open multiplayer board
 def open_multiplayer_board(root, player1, player2):
-    MultiplayerBoard(root, player1, player2)
+    open_multiplayer_board(root, player1, player2)
 
 # Create main window
 root = tk.Tk()
@@ -204,16 +210,14 @@ def hide_solo_menu(event):
 
 root.bind("<Button-1>", hide_solo_menu)
 
-multiplayer_button = ttk.Button(root, text="MULTIPLAYER", command=start_multiplayer, width=button_width)
-multiplayer_button_window = canvas.create_window(window_width/2, 160, window=multiplayer_button)  # Adjusted y position
+multiplayer_button = ttk.Button(root, text="MULTIPLAYER", width=button_width, command=start_multiplayer)
+multiplayer_button_window = canvas.create_window(window_width/2, 170, window=multiplayer_button)
 
-story_button = ttk.Button(root, text="STORY", command=show_story, width=button_width)
-story_button_window = canvas.create_window(window_width/2, 200, window=story_button)  # Adjusted y position
+story_button = ttk.Button(root, text="STORY", width=button_width, command=show_story)
+story_button_window = canvas.create_window(window_width/2, 220, window=story_button)
 
-rules_button = ttk.Button(root, text="RULES", command=show_rules, width=button_width)
-rules_button_window = canvas.create_window(window_width/2, 240, window=rules_button)  # Adjusted y position
-# Run the application
+rules_button = ttk.Button(root, text="RULES", width=button_width, command=show_rules)
+rules_button_window = canvas.create_window(window_width/2, 270, window=rules_button)
+
+# Start the Tkinter main loop
 root.mainloop()
-
-# Quit pygame when the tkinter window is closed
-pygame.quit()
