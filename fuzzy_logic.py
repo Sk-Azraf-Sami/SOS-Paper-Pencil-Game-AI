@@ -25,12 +25,11 @@ import random
 
 def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
     if player_turn[0] == 2:  # AI's turn (player 2)
-        # Generate random valid move until found
         while True:
             row = random.randint(0, 5)
             col = random.randint(0, 5)
             if board[row][col] == '':
-                handle_click_ai(None, row, col, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move)
+                handle_click_ai(None, row, col, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
                 break
 
 def open_multiplayer_board(root_window, p1, p2):
