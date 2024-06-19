@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageSequence
 import pygame
-from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, check_game_end, handle_click_ai, bind_tooltip, player_turn
+from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, check_game_end, handle_click_ai, bind_tooltip, player_turn, player1_score, player2_score
 
 pygame.mixer.init()
 
@@ -17,8 +17,6 @@ tiger_frames = []
 lion_frames = []
 player1 = "Player 1"
 player2 = "Player 2"
-player1_score = 0
-player2_score = 0
 
 import random
 
@@ -29,8 +27,8 @@ def evaluate_board(board):
 def get_possible_moves(board):
     return [(i, j) for i in range(board_size) for j in range(board_size) if board[i][j] == '']
 
-def minimax(board, depth, alpha, beta, is_maximizing, player1_score, player2_score, board_window, root, player1, player2):
-    if depth == 0 or check_game_end(board, player1_score, player2_score, board_window, root, player1, player2):
+def minimax(board,scoreboard_frame, depth, alpha, beta, is_maximizing, player1_score, player2_score, board_window, root, player1, player2):
+    if depth == 0 or check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2):
         return evaluate_board(board)
 
     possible_moves = get_possible_moves(board)
@@ -42,7 +40,7 @@ def minimax(board, depth, alpha, beta, is_maximizing, player1_score, player2_sco
             board_copy[move[0]][move[1]] = 'O'  # AI always plays 'O'
             if check_sos(board_copy, move[0], move[1], 'O')[0]:
                 player2_score += 1
-            eval = minimax(board_copy, depth - 1, alpha, beta, False, player1_score, player2_score, board_window, root, player1, player2)
+            eval = minimax(board_copy, scoreboard_frame, depth - 1, alpha, beta, False, player1_score, player2_score, board_window, root, player1, player2)
             max_eval = max(max_eval, eval)
             alpha = max(alpha, eval)
             if beta <= alpha:
@@ -55,7 +53,7 @@ def minimax(board, depth, alpha, beta, is_maximizing, player1_score, player2_sco
             board_copy[move[0]][move[1]] = 'S'  # Human always plays 'S'
             if check_sos(board_copy, move[0], move[1], 'S')[0]:
                 player1_score += 1
-            eval = minimax(board_copy, depth - 1, alpha, beta, True, player1_score, player2_score, board_window, root, player1, player2)
+            eval = minimax(board_copy, scoreboard_frame, depth - 1, alpha, beta, True, player1_score, player2_score, board_window, root, player1, player2)
             min_eval = min(min_eval, eval)
             beta = min(beta, eval)
             if beta <= alpha:
@@ -73,7 +71,7 @@ def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_f
             board_copy[move[0]][move[1]] = 'O'  # AI always plays 'O'
             if check_sos(board_copy, move[0], move[1], 'O')[0]:
                 player2_score += 1
-            score = minimax(board_copy, 3, float('-inf'), float('inf'), False, player1_score, player2_score, board_window, root, player1, player2)  # Adjust depth as needed
+            score = minimax(board_copy,scoreboard_frame, 1, float('-inf'), float('inf'), False, player1_score, player2_score, board_window, root, player1, player2)  # Adjust depth as needed
             if score > best_score:
                 best_score = score
                 best_move = move

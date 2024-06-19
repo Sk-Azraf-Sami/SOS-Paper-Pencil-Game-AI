@@ -72,10 +72,11 @@ def increment_score(player, scoreboard_frame, player1, player2):
     update_scoreboard(scoreboard_frame, player1, player2)
 
 def update_button_image(button, frames, board_window, index=0):
-    if frames:  # Ensure frames is not empty
-        button.config(image=frames[index])
-        animation_id = board_window.after(100, update_button_image, button, frames, board_window, (index + 1) % len(frames))
-        button.animation_id = animation_id  # Store the animation ID
+    if board_window.winfo_exists():  # Check if the application is still running
+        if frames and button.winfo_exists():  # Ensure frames is not empty and button exists
+            button.config(image=frames[index])
+            animation_id = board_window.after(100, update_button_image, button, frames, board_window, (index + 1) % len(frames))
+            button.animation_id = animation_id  # Store the animation ID
 
 def check_sos(board, row, col, char):
     sos_positions = []
@@ -208,7 +209,9 @@ def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, 
             player_turn[0] = 2 if player_turn[0] == 1 else 1
             update_scoreboard(scoreboard_frame, player1, player2)
             
+            # ai move.......................
             if ai_make_move and player_turn[0] == 2:
                 board_window.after(500, lambda: ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
-                
+            #......................
+               
         check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2)
