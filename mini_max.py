@@ -2,13 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageSequence
 import pygame
-from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, check_game_end
-from sos_game_utils import player1_score, player2_score, player_turn, bind_tooltip, handle_click_ai
+from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, check_game_end, handle_click_ai, bind_tooltip, player_turn
 
 pygame.mixer.init()
 
 # Initialize global variables
-tooltip_window = None
 board_window = None
 buttons = []
 board = []
@@ -19,72 +17,69 @@ tiger_frames = []
 lion_frames = []
 player1 = "Player 1"
 player2 = "Player 2"
-
+player1_score = 0
+player2_score = 0
 
 import random
 
 def evaluate_board(board):
-    # Evaluate the board and return a score
-    score = 0
-    for row in range(len(board)):
-        for col in range(len(board[0])):
-            if board[row][col] == '':
-                if check_sos(board, row, col, 'S')[0]:
-                    score += 1  # Adjust score for AI
-                if check_sos(board, row, col, 'O')[0]:
-                    score += 1  # Adjust score for AI
-    return score
+    # This is a simple heuristic that could be improved
+    return player2_score - player1_score
 
-def minimax(board, depth, is_maximizing, alpha, beta):
+def get_possible_moves(board):
+    return [(i, j) for i in range(board_size) for j in range(board_size) if board[i][j] == '']
+
+def minimax(board, depth, alpha, beta, is_maximizing, player1_score, player2_score, board_window, root, player1, player2):
     if depth == 0 or check_game_end(board, player1_score, player2_score, board_window, root, player1, player2):
         return evaluate_board(board)
 
+    possible_moves = get_possible_moves(board)
+
     if is_maximizing:
         max_eval = float('-inf')
-        for row in range(len(board)):
-            for col in range(len(board[0])):
-                if board[row][col] == '':
-                    board[row][col] = 'S'
-                    eval = minimax(board, depth - 1, False, alpha, beta)
-                    board[row][col] = ''
-                    max_eval = max(max_eval, eval)
-                    alpha = max(alpha, eval)
-                    if beta <= alpha:
-                        break
+        for move in possible_moves:
+            board_copy = [row.copy() for row in board]
+            board_copy[move[0]][move[1]] = 'O'  # AI always plays 'O'
+            if check_sos(board_copy, move[0], move[1], 'O')[0]:
+                player2_score += 1
+            eval = minimax(board_copy, depth - 1, alpha, beta, False, player1_score, player2_score, board_window, root, player1, player2)
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
         return max_eval
     else:
         min_eval = float('inf')
-        for row in range(len(board)):
-            for col in range(len(board[0])):
-                if board[row][col] == '':
-                    board[row][col] = 'O'
-                    eval = minimax(board, depth - 1, True, alpha, beta)
-                    board[row][col] = ''
-                    min_eval = min(min_eval, eval)
-                    beta = min(beta, eval)
-                    if beta <= alpha:
-                        break
+        for move in possible_moves:
+            board_copy = [row.copy() for row in board]
+            board_copy[move[0]][move[1]] = 'S'  # Human always plays 'S'
+            if check_sos(board_copy, move[0], move[1], 'S')[0]:
+                player1_score += 1
+            eval = minimax(board_copy, depth - 1, alpha, beta, True, player1_score, player2_score, board_window, root, player1, player2)
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
         return min_eval
 
 def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
+    global player1_score, player2_score
     if player_turn[0] == 2:  # AI's turn (player 2)
+        possible_moves = get_possible_moves(board)
+        best_score = float('-inf')
         best_move = None
-        best_value = float('-inf')
-        for row in range(len(board)):
-            for col in range(len(board[0])):
-                if board[row][col] == '':
-                    board[row][col] = 'S'
-                    move_value = minimax(board, 3, False, float('-inf'), float('inf'))  # Depth is set to 3
-                    board[row][col] = ''
-                    if move_value > best_value:
-                        best_value = move_value
-                        best_move = (row, col)
-        
-        if best_move:
-            row, col = best_move
-            if handle_click_ai(None, row, col, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move):
-                ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
-
+        for move in possible_moves:
+            board_copy = [row.copy() for row in board]
+            board_copy[move[0]][move[1]] = 'O'  # AI always plays 'O'
+            if check_sos(board_copy, move[0], move[1], 'O')[0]:
+                player2_score += 1
+            score = minimax(board_copy, 3, float('-inf'), float('inf'), False, player1_score, player2_score, board_window, root, player1, player2)  # Adjust depth as needed
+            if score > best_score:
+                best_score = score
+                best_move = move
+        handle_click_ai(None, best_move[0], best_move[1], board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
+        if check_sos(board, best_move[0], best_move[1], 'O')[0]:  # Check if AI made 'SOS'
+            ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
 
 def open_multiplayer_board(root_window, p1, p2):
     global board_window, player1, player2, board_size, board, buttons, scoreboard_frame
