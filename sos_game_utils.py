@@ -78,7 +78,6 @@ def update_button_image(button, frames, board_window, index=0):
         button.animation_id = animation_id  # Store the animation ID
 
 def check_sos(board, row, col, char):
-    found_sos = False
     sos_positions = []
     board_size = 6
 
@@ -87,13 +86,11 @@ def check_sos(board, row, col, char):
             board[row + i][col] == 'S' and
             board[row + i + 1][col] == 'O' and
             board[row + i + 2][col] == 'S'):
-            found_sos = True
             sos_positions.extend([(row + i, col), (row + i + 1, col), (row + i + 2, col)])
         if (0 <= col + i < board_size - 2 and
             board[row][col + i] == 'S' and
             board[row][col + i + 1] == 'O' and
             board[row][col + i + 2] == 'S'):
-            found_sos = True
             sos_positions.extend([(row, col + i), (row, col + i + 1), (row, col + i + 2)])
 
     for i in range(-2, 1):
@@ -101,16 +98,14 @@ def check_sos(board, row, col, char):
             board[row + i][col + i] == 'S' and
             board[row + i + 1][col + i + 1] == 'O' and
             board[row + i + 2][col + i + 2] == 'S'):
-            found_sos = True
             sos_positions.extend([(row + i, col + i), (row + i + 1, col + i + 1), (row + i + 2, col + i + 2)])
         if (0 <= row - i < board_size - 2 and 0 <= col + i < board_size - 2 and
             board[row - i][col + i] == 'S' and
             board[row - i - 1][col + i + 1] == 'O' and
             board[row - i - 2][col + i + 2] == 'S'):
-            found_sos = True
             sos_positions.extend([(row - i, col + i), (row - i - 1, col + i + 1), (row - i - 2, col + i + 2)])
 
-    return found_sos, sos_positions
+    return len(sos_positions) > 0, sos_positions
 
 def handle_click(event, row, col, board, buttons, fire_frames, water_frames,tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
     if event is None or event.num == 1:
@@ -153,9 +148,9 @@ def check_winner(row, col, char, board, buttons, player_turn, board_window, upda
             update_button_image(buttons[r][c], frames, board_window)
 
         if current_player == 1:
-            player1_score += 1
+            player1_score += len(sos_positions) // 3
         else:
-            player2_score += 1
+            player2_score += len(sos_positions) // 3
         update_scoreboard(root, player1, player2)
         return True
     return False
