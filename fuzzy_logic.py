@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageSequence
 import pygame
-from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, check_game_end, handle_click_ai, bind_tooltip, player_turn, player1_score, player2_score
+from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, check_game_end, handle_click_ai, bind_tooltip, player_turn, player1_score, player2_score, enable_all_buttons
 
 pygame.mixer.init()
 
@@ -146,6 +146,7 @@ def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_f
                     handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
                 else:
                     break
+    enable_all_buttons(buttons)
 
 #! .............................
 

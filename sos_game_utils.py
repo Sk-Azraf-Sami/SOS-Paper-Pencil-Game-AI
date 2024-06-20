@@ -184,6 +184,17 @@ def show_winner_message(winner, emoji):
     messagebox.showinfo("Game Over", f"{winner} wins the game! {emoji}")
     
 
+def disable_all_buttons(buttons):
+    for row in buttons:
+        for button in row:
+            button.config(state=tk.DISABLED)
+
+def enable_all_buttons(buttons):
+    for row in buttons:
+        for button in row:
+            if button["text"] == "":  # Only enable empty buttons
+                button.config(state=tk.NORMAL)
+
 def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move=None):
     if event is None or event.num == 1:
         char = 'S'
@@ -212,10 +223,12 @@ def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, 
             
             # AI move
             if ai_make_move and player_turn[0] == 2:
+                disable_all_buttons(buttons)  # Disable buttons during AI's turn
                 board_window.after(500, lambda: ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
         else:
             # Allow AI to make another move if it created "SOS"
             if player_turn[0] == 2 and ai_make_move:
+                disable_all_buttons(buttons)  # Disable buttons during AI's turn
                 board_window.after(500, lambda: ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2))
 
         check_game_end(board, scoreboard_frame, player1_score, player2_score, board_window, root, player1, player2)
