@@ -142,7 +142,7 @@ def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_f
                     if best_move != (-1, -1):
                         row, col = best_move
                         handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move, best_char)
-                        board_window.after(5000, continue_ai_move)  # Continue AI moves with a delay
+                        board_window.after(500, continue_ai_move)  # Continue AI moves with a delay
                     else:
                         enable_all_buttons(buttons)
                 else:
