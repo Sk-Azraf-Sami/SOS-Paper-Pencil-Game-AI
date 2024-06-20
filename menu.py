@@ -4,6 +4,7 @@ from tkinter import font
 import pygame
 from PIL import Image, ImageTk, ImageSequence
 from multiplayer import open_multiplayer_board
+import os
 
 # Initialize pygame for sound and animation
 pygame.init()
@@ -147,6 +148,18 @@ def show_rules():
 # Create main window
 root = tk.Tk()
 root.title("Game Mode Selection")
+
+
+# Set the game icon
+icon_path = os.path.abspath('resources/images/icon.ico')
+if os.path.exists(icon_path):
+    try:
+        img = ImageTk.PhotoImage(Image.open(icon_path))
+        root.tk.call('wm', 'iconphoto', root._w, img)
+    except Exception as e:
+        print(f"Failed to set icon: {e}")
+else:
+    print(f"Icon file not found at {icon_path}")
 
 window_width = 400
 window_height = 320
