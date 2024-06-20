@@ -105,17 +105,18 @@ def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_f
         best_move, best_char = genetic_algorithm(board)
         if best_move != (-1, -1):
             row, col = best_move
-            handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
+            handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move, best_char)
             
             # Check if the AI should make another move
             while player_turn[0] == 2:  # Check if it's still AI's turn
                 best_move, best_char = genetic_algorithm(board)
                 if best_move != (-1, -1):
                     row, col = best_move
-                    handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2)
+                    handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move, best_char)
                 else:
                     break
     enable_all_buttons(buttons)
+
 
 
 def apply_genetic_algorithm(root_window, p1, p2):

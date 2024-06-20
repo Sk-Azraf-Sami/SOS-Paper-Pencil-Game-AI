@@ -195,8 +195,11 @@ def enable_all_buttons(buttons):
             if button["text"] == "":  # Only enable empty buttons
                 button.config(state=tk.NORMAL)
 
-def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move=None):
-    if event is None or event.num == 1:
+def handle_click_ai(event, row, col, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move=None, best_char=None):
+    if event is None:
+        char = best_char
+        frames = fire_frames if char == 'S' else water_frames
+    elif event.num == 1:
         char = 'S'
         frames = fire_frames
     elif event.num == 3:
