@@ -100,12 +100,13 @@ def check_sos(board, row, col, char):
             board[row + i + 1][col + i + 1] == 'O' and
             board[row + i + 2][col + i + 2] == 'S'):
             sos_positions.extend([(row + i, col + i), (row + i + 1, col + i + 1), (row + i + 2, col + i + 2)])
-        if (0 <= row - i < board_size - 2 and 0 <= col + i < board_size - 2 and
+        if (2 <= row - i < board_size and 0 <= col + i < board_size - 2 and
             board[row - i][col + i] == 'S' and
             board[row - i - 1][col + i + 1] == 'O' and
             board[row - i - 2][col + i + 2] == 'S'):
             sos_positions.extend([(row - i, col + i), (row - i - 1, col + i + 1), (row - i - 2, col + i + 2)])
 
+    print(sos_positions)
     return len(sos_positions) > 0, sos_positions
 
 def handle_click(event, row, col, board, buttons, fire_frames, water_frames,tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
