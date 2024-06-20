@@ -21,3 +21,149 @@ Each turn plays one player.
 If a player makes an SOS sequence that player plays another turn.
 The game ends when all squares are filled out.
 The player which will make the most SOS sequences wins.
+
+
+Creating installation files for your SOS game on both Windows and Ubuntu involves a few steps. We can use tools like PyInstaller or cx_Freeze to package your Python script and its dependencies into an executable. Here are the steps for both platforms:
+
+### Step 1: Prepare Your Project
+Ensure your project directory is organized, and you have a requirements file listing all dependencies.
+
+#### Directory Structure:
+```
+sos_game/
+│
+├── main.py
+├── resources/
+│   ├── music/
+│   └── images/
+└── requirements.txt
+```
+
+#### `requirements.txt`:
+List all necessary Python packages:
+```
+pygame
+tkinter
+```
+
+### Step 2: Create Executable for Windows
+1. **Install PyInstaller**:
+    ```sh
+    pip install pyinstaller
+    ```
+
+2. **Create Executable**:
+    Navigate to your project directory and run:
+    ```sh
+    pyinstaller --onefile --windowed main.py
+    ```
+    This will generate a `dist` folder containing `main.exe`.
+
+3. **Bundle Dependencies**:
+    Ensure all resources (images, music, etc.) are included in the distribution. You might need to tweak the PyInstaller spec file to include these.
+
+#### Example spec file (`main.spec`):
+```python
+# -*- mode: python ; coding: utf-8 -*-
+
+block_cipher = None
+
+a = Analysis(
+    ['main.py'],
+    pathex=[],
+    binaries=[],
+    datas=[('resources', 'resources')],
+    hiddenimports=[],
+    hookspath=[],
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+)
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    exclude_binaries=True,
+    name='main',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=False,
+    disable_windowed_traceback=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='main',
+)
+```
+Run PyInstaller with this spec file:
+```sh
+pyinstaller main.spec
+```
+
+### Step 3: Create Executable for Ubuntu
+1. **Install cx_Freeze**:
+    ```sh
+    pip install cx_Freeze
+    ```
+
+2. **Create Setup Script**:
+    Create a `setup.py` script in your project directory.
+
+#### `setup.py`:
+```python
+import sys
+from cx_Freeze import setup, Executable
+
+build_exe_options = {
+    "packages": ["pygame", "tkinter"],
+    "include_files": [("resources", "resources")],
+}
+
+setup(
+    name="SOS Game",
+    version="0.1",
+    description="SOS Game created with Pygame and Tkinter",
+    options={"build_exe": build_exe_options},
+    executables=[Executable("main.py", base=None)],
+)
+```
+
+3. **Build Executable**:
+    Navigate to your project directory and run:
+    ```sh
+    python setup.py build
+    ```
+
+### Step 4: Package for Distribution
+#### On Windows:
+1. Use Inno Setup or a similar tool to create an installer for your Windows executable.
+2. Include the `dist` folder and all dependencies.
+
+#### On Ubuntu:
+1. Create a Debian package (`.deb`):
+    ```sh
+    sudo apt-get install checkinstall
+    sudo checkinstall --pkgname=sos-game --pkgversion=1.0 --backup=no --deldoc=yes --fstrans=no --default python setup.py install
+    ```
+
+### Additional Notes:
+- **Fonts**: Ensure any custom fonts are included in the `resources` directory and referenced correctly in your code.
+- **Dependencies**: Make sure all dependencies listed in `requirements.txt` are installed before running PyInstaller or cx_Freeze.
+
+Following these steps will allow you to create installation files for both Windows and Ubuntu. This will help users install and run your SOS game easily.
