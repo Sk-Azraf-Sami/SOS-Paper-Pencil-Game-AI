@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageSequence
 import pygame
-from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, check_game_end, handle_click_ai, bind_tooltip, player_turn, player1_score, player2_score, enable_all_buttons
+from sos_game_utils import update_scoreboard, increment_score, update_button_image, check_sos, check_winner, \
+    check_game_end, handle_click_ai, bind_tooltip, player_turn, player1_score, player2_score, enable_all_buttons
 
 pygame.mixer.init()
 
@@ -19,9 +20,9 @@ player1 = "Player 1"
 player2 = "Player 2"
 
 import random
+import heapq
 
-#!: Apply A Start Algorithm 
-#! Just change this portion
+
 def evaluate_board(board):
     score = 0
     for row in range(len(board)):
@@ -31,125 +32,109 @@ def evaluate_board(board):
                     score += 1
                 if row + 2 < len(board) and board[row + 1][col] == 'O' and board[row + 2][col] == 'S':
                     score += 1
-                if row + 2 < len(board) and col + 2 < len(board[0]) and board[row + 1][col + 1] == 'O' and board[row + 2][col + 2] == 'S':
+                if row + 2 < len(board) and col + 2 < len(board[0]) and board[row + 1][col + 1] == 'O' and \
+                        board[row + 2][col + 2] == 'S':
                     score += 1
-                if row + 2 < len(board) and col - 2 >= 0 and board[row + 1][col - 1] == 'O' and board[row + 2][col - 2] == 'S':
+                if row + 2 < len(board) and col - 2 >= 0 and board[row + 1][col - 1] == 'O' and board[row + 2][
+                    col - 2] == 'S':
                     score += 1
             elif board[row][col] == 'O':
-                if col - 1 >= 0 and col + 1 < len(board[0]) and board[row][col - 1] == 'S' and board[row][col + 1] == 'S':
+                if col - 1 >= 0 and col + 1 < len(board[0]) and board[row][col - 1] == 'S' and board[row][
+                    col + 1] == 'S':
                     score += 1
                 if row - 1 >= 0 and row + 1 < len(board) and board[row - 1][col] == 'S' and board[row + 1][col] == 'S':
                     score += 1
-                if row - 1 >= 0 and row + 1 < len(board) and col - 1 >= 0 and col + 1 < len(board[0]) and board[row - 1][col - 1] == 'S' and board[row + 1][col + 1] == 'S':
+                if row - 1 >= 0 and row + 1 < len(board) and col - 1 >= 0 and col + 1 < len(board[0]) and \
+                        board[row - 1][col - 1] == 'S' and board[row + 1][col + 1] == 'S':
                     score += 1
-                if row - 1 >= 0 and row + 1 < len(board) and col + 1 < len(board[0]) and col - 1 >= 0 and board[row - 1][col + 1] == 'S' and board[row + 1][col - 1] == 'S':
+                if row - 1 >= 0 and row + 1 < len(board) and col + 1 < len(board[0]) and col - 1 >= 0 and \
+                        board[row - 1][col + 1] == 'S' and board[row + 1][col - 1] == 'S':
                     score += 1
     return score
 
-def is_moves_left(board):
-    for row in board:
-        if '' in row:
-            return True
-    return False
 
-def mini_max(board, depth, is_max, alpha, beta, max_depth):
-    score = evaluate_board(board)
+def heuristic(board):
+    return evaluate_board(board)
 
-    if score >= 1 or depth == max_depth:
-        return score - depth
 
-    if not is_moves_left(board):
-        return 0
-
-    if is_max:
-        best = -1000
-
-        for i in range(len(board)):
-            for j in range(len(board[0])):
-                if board[i][j] == '':
-                    board[i][j] = 'S'
-                    best = max(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
-                    board[i][j] = ''
-                    alpha = max(alpha, best)
-                    if beta <= alpha:
-                        break
-
-                    board[i][j] = 'O'
-                    best = max(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
-                    board[i][j] = ''
-                    alpha = max(alpha, best)
-                    if beta <= alpha:
-                        break
-        return best
-    else:
-        best = 1000
-
-        for i in range(len(board)):
-            for j in range(len(board[0])):
-                if board[i][j] == '':
-                    board[i][j] = 'S'
-                    best = min(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
-                    board[i][j] = ''
-                    beta = min(beta, best)
-                    if beta <= alpha:
-                        break
-
-                    board[i][j] = 'O'
-                    best = min(best, mini_max(board, depth + 1, not is_max, alpha, beta, max_depth))
-                    board[i][j] = ''
-                    beta = min(beta, best)
-                    if beta <= alpha:
-                        break
-        return best
-
-def find_best_move(board, max_depth):
-    best_val = -1000
-    best_move = (-1, -1)
-    best_char = 'S'
-
+def get_possible_moves(board):
+    moves = []
     for i in range(len(board)):
         for j in range(len(board[0])):
             if board[i][j] == '':
-                board[i][j] = 'S'
-                move_val = mini_max(board, 0, False, -1000, 1000, max_depth)
-                board[i][j] = ''
+                moves.append((i, j))
+    return moves
 
-                if move_val > best_val:
-                    best_move = (i, j)
-                    best_val = move_val
-                    best_char = 'S'
 
-                board[i][j] = 'O'
-                move_val = mini_max(board, 0, False, -1000, 1000, max_depth)
-                board[i][j] = ''
+def a_star(board, max_depth):
+    pq = []
+    initial_moves = get_possible_moves(board)
+    for move in initial_moves:
+        i, j = move
+        board[i][j] = 'S'
+        score = heuristic(board)
+        heapq.heappush(pq, (-score, 0, move, 'S'))
+        board[i][j] = ''
+        board[i][j] = 'O'
+        score = heuristic(board)
+        heapq.heappush(pq, (-score, 0, move, 'O'))
+        board[i][j] = ''
 
-                if move_val > best_val:
-                    best_move = (i, j)
-                    best_val = move_val
-                    best_char = 'O'
+    best_move = (-1, -1)
+    best_char = 'S'
+    best_score = -1000
+
+    while pq:
+        neg_score, depth, (i, j), char = heapq.heappop(pq)
+        score = -neg_score
+        if score > best_score:
+            best_score = score
+            best_move = (i, j)
+            best_char = char
+
+        if depth < max_depth:
+            board[i][j] = char
+            next_moves = get_possible_moves(board)
+            for next_move in next_moves:
+                ni, nj = next_move
+                board[ni][nj] = 'S'
+                next_score = heuristic(board)
+                heapq.heappush(pq, (-next_score, depth + 1, next_move, 'S'))
+                board[ni][nj] = ''
+                board[ni][nj] = 'O'
+                next_score = heuristic(board)
+                heapq.heappush(pq, (-next_score, depth + 1, next_move, 'O'))
+                board[ni][nj] = ''
+            board[i][j] = ''
 
     return best_move, best_char
 
-def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
+
+def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root,
+                 update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
     if player_turn[0] == 2:  # AI's turn (player 2)
-        max_depth = 3  # Set a lower depth limit
-        best_move, best_char = find_best_move(board, max_depth)
+        max_depth = 3  # Set a depth limit
+        best_move, best_char = a_star(board, max_depth)
         if best_move != (-1, -1):
             row, col = best_move
-            handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move, best_char)
-            
+            handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames,
+                            water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard,
+                            check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2,
+                            ai_make_move, best_char)
+
             # Check if the AI should make another move
             while player_turn[0] == 2:  # Check if it's still AI's turn
-                best_move, best_char = find_best_move(board, max_depth)
+                best_move, best_char = a_star(board, max_depth)
                 if best_move != (-1, -1):
                     row, col = best_move
-                    handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move, best_char)
+                    handle_click_ai(None, row, col, board, buttons, fire_frames if best_char == 'S' else water_frames,
+                                    water_frames, tiger_frames, lion_frames, player_turn, board_window, root,
+                                    update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame,
+                                    player1, player2, ai_make_move, best_char)
                 else:
                     break
-    
-    enable_all_buttons(buttons)
 
-#! ................................
+    enable_all_buttons(buttons)
 
 
 def apply_a_star(root_window, p1, p2):
@@ -162,7 +147,7 @@ def apply_a_star(root_window, p1, p2):
     pygame.mixer.music.pause()
 
     board_window = tk.Toplevel(root_window)
-    board_window.title("SOS-MEDIUM MODE")
+    board_window.title("SOS MEDIUM MODE (A*)")
 
     window_width = 580
     window_height = 380
@@ -204,29 +189,54 @@ def apply_a_star(root_window, p1, p2):
     board_size = 6
     board = [['' for _ in range(board_size)] for _ in range(board_size)]
 
-    fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/fire.gif"))]
-    water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/water.gif"))]
-    forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/forest.gif"))]
-    tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/human.gif"))]
-    lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/robot.gif"))]
+    fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in
+                   ImageSequence.Iterator(Image.open("resources/images/fire.gif"))]
+    water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in
+                    ImageSequence.Iterator(Image.open("resources/images/water.gif"))]
+    forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in
+                     ImageSequence.Iterator(Image.open("resources/images/forest.gif"))]
+    tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in
+                    ImageSequence.Iterator(Image.open("resources/images/human.gif"))]
+    lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in
+                   ImageSequence.Iterator(Image.open("resources/images/robot.gif"))]
 
     buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
     for row in range(board_size):
         for col in range(board_size):
-            button = ttk.Button(board_frame, text='', width=5, command=lambda r=row, c=col: handle_click_ai(None, r, c, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root_window, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move))
-            
+            button = ttk.Button(board_frame, text='', width=5,
+                                command=lambda r=row, c=col: handle_click_ai(None, r, c, board, buttons, fire_frames,
+                                                                             water_frames, tiger_frames, lion_frames,
+                                                                             player_turn, board_window, root_window,
+                                                                             update_scoreboard, check_winner,
+                                                                             check_game_end, bind_tooltip,
+                                                                             scoreboard_frame, player1, player2,
+                                                                             ai_make_move))
+
             button.grid(row=row, column=col, padx=5, pady=5)
             button.config(image=forest_frames[0])
             button.animation_id = None
             update_button_image(button, forest_frames, board_window)
-            button.bind('<Button-1>', lambda event, r=row, c=col: handle_click_ai(event, r, c, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root_window, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move))
+            button.bind('<Button-1>',
+                        lambda event, r=row, c=col: handle_click_ai(event, r, c, board, buttons, fire_frames,
+                                                                    water_frames, tiger_frames, lion_frames,
+                                                                    player_turn, board_window, root_window,
+                                                                    update_scoreboard, check_winner, check_game_end,
+                                                                    bind_tooltip, scoreboard_frame, player1, player2,
+                                                                    ai_make_move))
 
-            button.bind('<Button-3>', lambda event, r=row, c=col: handle_click_ai(event, r, c, board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root_window, update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2, ai_make_move))
+            button.bind('<Button-3>',
+                        lambda event, r=row, c=col: handle_click_ai(event, r, c, board, buttons, fire_frames,
+                                                                    water_frames, tiger_frames, lion_frames,
+                                                                    player_turn, board_window, root_window,
+                                                                    update_scoreboard, check_winner, check_game_end,
+                                                                    bind_tooltip, scoreboard_frame, player1, player2,
+                                                                    ai_make_move))
             buttons[row][col] = button
 
             bind_tooltip(button, "")
 
     board_window.protocol("WM_DELETE_WINDOW", root_window.destroy)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
