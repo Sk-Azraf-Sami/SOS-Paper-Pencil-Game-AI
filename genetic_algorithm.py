@@ -150,7 +150,7 @@ def apply_genetic_algorithm(root_window, p1, p2):
     main_frame.place(relx=0.5, rely=0.5, anchor="center")
 
     background_image = Image.open("resources/images/background_hard.jpg")
-    frame_background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.ANTIALIAS))
+    frame_background_photo = ImageTk.PhotoImage(background_image.resize((window_width, window_height), Image.LANCZOS))
     frame_background_label = tk.Label(main_frame, image=frame_background_photo)
     frame_background_label.image = frame_background_photo
     frame_background_label.place(x=0, y=0, relwidth=1, relheight=1)
@@ -162,7 +162,7 @@ def apply_genetic_algorithm(root_window, p1, p2):
     scoreboard_frame.grid(row=0, column=1, padx=(10, 20), pady=0)
 
     scoreboard_image = Image.open("resources/images/score_board.png")
-    scoreboard_photo = ImageTk.PhotoImage(scoreboard_image.resize((200, 100), Image.ANTIALIAS))
+    scoreboard_photo = ImageTk.PhotoImage(scoreboard_image.resize((200, 100), Image.LANCZOS))
     scoreboard_frame.create_image(0, 0, image=scoreboard_photo, anchor="nw")
     scoreboard_frame.image = scoreboard_photo
 
@@ -171,11 +171,11 @@ def apply_genetic_algorithm(root_window, p1, p2):
     board_size = 6
     board = [['' for _ in range(board_size)] for _ in range(board_size)]
 
-    fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/fire.gif"))]
-    water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/water.gif"))]
-    forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/forest.gif"))]
-    tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/human.gif"))]
-    lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.ANTIALIAS)) for img in ImageSequence.Iterator(Image.open("resources/images/robot.gif"))]
+    fire_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/fire.gif"))]
+    water_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/water.gif"))]
+    forest_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/forest.gif"))]
+    tiger_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/human.gif"))]
+    lion_frames = [ImageTk.PhotoImage(img.resize((40, 40), Image.LANCZOS)) for img in ImageSequence.Iterator(Image.open("resources/images/robot.gif"))]
 
     buttons = [[None for _ in range(board_size)] for _ in range(board_size)]
     for row in range(board_size):
