@@ -136,13 +136,14 @@ def show_rules():
     rules_window.resizable(False, False)
 
     rules_text = (
-        "Game Rule:\n"
         "SOS is a two-player game.\n"
-        "1. Players can place either S or O in an empty square on their turn.\n"
-        "2. Each player takes one turn at a time.\n"
-        "3. If a player forms an SOS sequence, they get another turn.\n"
-        "4. The game ends when all squares are filled.\n"
-        "5. The player with the most SOS sequences wins."
+        "1. Players can place either fire or water in an empty square on their turn.\n"
+        "2. To place fire, left-click the mouse.\n"
+        "3. To place water, right-click the mouse.\n"
+        "4. Each player takes one turn at a time.\n"
+        "5. If a player forms an fire-water-fire sequence, they get another turn.\n"
+        "6. The game ends when all squares are filled.\n"
+        "7. The player with the most fire-water-fire sequences wins."
     )
 
     tk.Label(rules_window, text=rules_text, wraplength=380).pack(pady=10)
