@@ -142,7 +142,7 @@ def apply_fuzzy_logic(root_window, p1, p2):
     pygame.mixer.music.pause()
 
     board_window = tk.Toplevel(root_window)
-    board_window.title("SOS-VERY HARD MODE")
+    board_window.title("SOS-EASY MODE")
 
     window_width = 580
     window_height = 380

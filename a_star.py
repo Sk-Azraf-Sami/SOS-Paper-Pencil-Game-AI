@@ -147,7 +147,7 @@ def apply_a_star(root_window, p1, p2):
     pygame.mixer.music.pause()
 
     board_window = tk.Toplevel(root_window)
-    board_window.title("SOS MEDIUM MODE (A*)")
+    board_window.title("SOS HARD MODE (A*)")
 
     window_width = 580
     window_height = 380

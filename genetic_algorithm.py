@@ -129,7 +129,7 @@ def apply_genetic_algorithm(root_window, p1, p2):
     pygame.mixer.music.stop()  # Stop the background music of the root window
 
     board_window = tk.Toplevel(root_window)
-    board_window.title("SOS-HARD MODE")
+    board_window.title("SOS-MEDIUM MODE")
 
     window_width = 580
     window_height = 380
