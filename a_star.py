@@ -22,6 +22,8 @@ player2 = "Player 2"
 import random
 import heapq
 
+# Memoization dictionary
+memo = {}
 
 def evaluate_board(board):
     score = 0
@@ -54,7 +56,12 @@ def evaluate_board(board):
 
 
 def heuristic(board):
-    return evaluate_board(board)
+    board_tuple = tuple(tuple(row) for row in board)
+    if board_tuple in memo:
+        return memo[board_tuple]
+    score = evaluate_board(board)
+    memo[board_tuple] = score
+    return score
 
 
 def get_possible_moves(board):
@@ -113,7 +120,7 @@ def a_star(board, max_depth):
 def ai_make_move(board, buttons, fire_frames, water_frames, tiger_frames, lion_frames, player_turn, board_window, root,
                  update_scoreboard, check_winner, check_game_end, bind_tooltip, scoreboard_frame, player1, player2):
     if player_turn[0] == 2:  # AI's turn (player 2)
-        max_depth = 3  # Set a depth limit
+        max_depth = 2  # Reduced depth limit
         best_move, best_char = a_star(board, max_depth)
         if best_move != (-1, -1):
             row, col = best_move
