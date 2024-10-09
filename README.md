@@ -30,8 +30,13 @@ The game also supports **AI vs. Human** and **Human vs. Human** play modes.
 
 ## [User Interface](#user-interface)
 
-![SOS Game UI](link_to_UI_image.png)
-
+| ![Home Menu](image1.png)  <br> **Figure 1: Home Menu** | ![Mode Selection](image2.png)  <br> **Figure 2: Mode Selection** |
+|:-------------------------------------------------------:|:---------------------------------------------------------------:|
+| ![Game Story](image4.png)  <br> **Figure 3: Game Story** | ![Rules](image5.png)  <br> **Figure 4: Rules**                   |
+| ![Player's Name](image6.png)  <br> **Figure 5: Player's Name** | ![Multiplayer Board](image.png)  <br> **Figure 6: Multiplayer Board** |
+| ![Interaction on Multiplayer Board](9.png)  <br> **Figure 7: Interaction on Multiplayer Board** | ![Easy Mode using Fuzzy Logic](10.png)  <br> **Figure 8: Easy Mode using Fuzzy Logic** |
+| ![Medium Mode using Genetic Algorithm](11.png)  <br> **Figure 9: Medium Mode using Genetic Algorithm** | ![Hard Mode using A*](12.png)  <br> **Figure 10: Hard Mode using A*** |
+| ![Very Hard Mode using Min-Max](13.png)  <br> **Figure 11: Very Hard Mode using Min-Max** | ![Result Window Box](14.png)  <br> **Figure 12: Result Window Box** |
 
 ## [Installation](#installation)
 
