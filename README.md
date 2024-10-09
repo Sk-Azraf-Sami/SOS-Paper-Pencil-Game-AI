@@ -104,7 +104,7 @@ python menu.py
 
 ## [Documentation](#documentation)
 
-For detailed information about the Cardio Tracker app, please refer to the [docummentation](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/blob/main/sos-documentation.pdf).
+For detailed information about the 'SOS-Paper-Pencil AI Game', please refer to the [docummentation](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/blob/main/sos-documentation.pdf).
 
 
 ## [Contributing](#contributing)
