@@ -1,10 +1,11 @@
 
 # SOS AI Game
 
-[![GitHub license](https://img.shields.io/github/license/username/repo.svg)](https://github.com/username/repo/blob/main/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/username/repo.svg)](https://github.com/username/repo/issues)
-[![GitHub forks](https://img.shields.io/github/forks/username/repo.svg)](https://github.com/username/repo/network)
-[![GitHub stars](https://img.shields.io/github/stars/username/repo.svg)](https://github.com/username/repo/stargazers)
+[![GitHub license](https://img.shields.io/github/license/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/issues)
+[![GitHub forks](https://img.shields.io/github/forks/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/network)
+[![GitHub stars](https://img.shields.io/github/stars/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/stargazers)
+
 
 ## Table of Contents 
 - [Description](#description)
