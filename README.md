@@ -67,7 +67,7 @@ For detailed information about the Cardio Tracker app, please refer to the [Wiki
 
 ## [Contributing](#contributing)
 
-Thank you for your interest in contributing to the Cardio Tracker app! We welcome contributions from everyone. To get started, please follow the guidelines below:
+Thank you for your interest in contributing to the 'SOS-Paper-Pencil AI Game'! We welcome contributions from everyone. To get started, please follow the guidelines below:
 
 ##### Bug Reports and Feature Requests
 
