@@ -1,10 +1,13 @@
 
 # SOS AI Game
 
-[![GitHub license](https://img.shields.io/github/license/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/blob/main/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/issues)
-[![GitHub forks](https://img.shields.io/github/forks/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/network)
-[![GitHub stars](https://img.shields.io/github/stars/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.svg)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/stargazers)
+![Version](https://img.shields.io/badge/Version-1.0-blue.svg?style=plastic&logo=appveyor&logoColor=white&color=blueviolet)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-blue.svg?style=plastic&logo=windows&logoColor=white&color=green)
+[![GitHub contributors](https://img.shields.io/github/contributors-anon/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI?style=plastic&labelColor=&color=blue&logo=)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/graphs/contributors)
+[![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI?style=plastic&labelColor=&color=blue&logo=)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/commits/main)
+[![GitHub language count](https://img.shields.io/github/languages/count/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI?style=plastic&labelColor=&color=blue&logo=)](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/search?l=python&type=Code)
+![GitHub repo size](https://img.shields.io/github/repo-size/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI?style=plastic)
+![License](https://img.shields.io/badge/License-[MIT]-blue.svg?style=plastic&color=orange&logo=GitHub)
 
 
 ## Table of Contents 
