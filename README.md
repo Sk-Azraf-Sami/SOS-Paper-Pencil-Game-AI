@@ -1,4 +1,4 @@
-# AI Game
+
 # SOS AI Game
 
 [![GitHub license](https://img.shields.io/github/license/username/repo.svg)](https://github.com/username/repo/blob/main/LICENSE)
@@ -6,7 +6,13 @@
 [![GitHub forks](https://img.shields.io/github/forks/username/repo.svg)](https://github.com/username/repo/network)
 [![GitHub stars](https://img.shields.io/github/stars/username/repo.svg)](https://github.com/username/repo/stargazers)
 
-## Introduction
+## Table of Contents 
+- [Description](#description)
+- [User Interface](#user-interface)
+- [Installation](#installation)
+- [How to Run](#how-to-run)
+
+## [Description](#description)
 
 SOS is a traditional paper-pencil game where players take turns writing either an 'S' or an 'O' on a grid to form the word "SOS" horizontally, vertically, or diagonally. This AI-based SOS game enhances the original game with artificial intelligence algorithms to provide different levels of difficulty:
 
@@ -17,15 +23,12 @@ SOS is a traditional paper-pencil game where players take turns writing either a
 
 The game also supports **AI vs. Human** and **Human vs. Human** play modes.
 
-## User Interface
+## [User Interface](#user-interface)
 
 ![SOS Game UI](link_to_UI_image.png)
 
-## Game Video
 
-[![Watch the Game Overview](https://img.youtube.com/vi/your-video-id/maxresdefault.jpg)](https://youtu.be/your-video-id)
-
-## How to Install
+## [Installation](#installation)
 
 To install the SOS AI Game, follow these steps:
 
@@ -42,7 +45,7 @@ To install the SOS AI Game, follow these steps:
 
 3. Ensure you have Python installed. The game was developed using Python 3.x.
 
-## How to Run
+## [How to Run](#how-to-run)
 
 To start the game, run the following command:
 
