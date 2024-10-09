@@ -139,7 +139,7 @@ To maintain consistency throughout the project's codebase, please adhere to the 
 
 If you have any questions or need assistance, feel free to reach out to the project maintainers or open an issue on GitHub.
 
-We appreciate your contributions and look forward to working with you to improve the Cardio Tracker app!
+We appreciate your contributions and look forward to working with you to improve this game!
 
 
 ## [License](#license)
