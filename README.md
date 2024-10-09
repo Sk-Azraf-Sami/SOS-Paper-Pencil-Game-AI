@@ -40,8 +40,6 @@ The game also supports **AI vs. Human** and **Human vs. Human** play modes.
 
 ## [Installation](#installation)
 
-## Installation
-
 To install the SOS AI Game, follow these steps:
 
 1. **Clone the repository:**
