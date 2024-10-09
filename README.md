@@ -40,34 +40,69 @@ The game also supports **AI vs. Human** and **Human vs. Human** play modes.
 
 ## [Installation](#installation)
 
+## Installation
+
 To install the SOS AI Game, follow these steps:
 
-1. Clone the repository:
+1. **Clone the repository:**
     ```bash
-    git clone https://github.com/username/repo.git
-    cd repo
+    git clone https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI.git
+    cd SOS-Paper-Pencil-Game-AI
     ```
 
-2. Install the required dependencies:
+2. **Install the required dependencies:**
+    Make sure you have `pip` installed and then run:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. Ensure you have Python installed. The game was developed using Python 3.x.
+3. **Ensure you have Python installed:**
+    The game was developed using Python 3.x. You can download the latest version from [python.org](https://www.python.org/downloads/). After installation, verify that Python is installed correctly by running:
+    ```bash
+    python --version
+    ```
+    or, for some systems:
+    ```bash
+    python3 --version
+    ```
+
+4. **Install Tkinter (if necessary):**
+    Tkinter is included with the standard Python installation on most systems. You can test if it's installed by running:
+    ```python
+    import tkinter
+    tkinter._test()
+    ```
+    If a small window appears, Tkinter is installed correctly. If you are using Linux and Tkinter is not available, you may need to install it manually:
+    - **Ubuntu/Debian:**
+      ```bash
+      sudo apt-get install python3-tk
+      ```
+    - **Fedora:**
+      ```bash
+      sudo dnf install python3-tkinter
+      ```
+    - **Arch Linux:**
+      ```bash
+      sudo pacman -S python
+      ```
+
 
 ## [How to Run](#how-to-run)
 
-To start the game, run the following command:
-
+To start the game, run the following command: 
 ```bash
-python main.py
+python menu.py
 ```
+#### Additional Notes
+- If you encounter any issues during installation, please check the repository's [issues section](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/issues) for solutions or to report a problem.
+- Be sure to check for updates regularly to keep the game running smoothly.
+
 
 ## [How to Play](#how-to-play)
 
 ## [Documentation](#documentation)
 
-For detailed information about the Cardio Tracker app, please refer to the [Wiki](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/blob/main/sos-documentation.pdf) section.
+For detailed information about the Cardio Tracker app, please refer to the [docummentation](https://github.com/Sk-Azraf-Sami/SOS-Paper-Pencil-Game-AI/blob/main/sos-documentation.pdf).
 
 
 ## [Contributing](#contributing)
