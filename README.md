@@ -104,7 +104,7 @@ python menu.py
 
 <p align="center">
   <a href="https://github.com/user-attachments/assets/6eda2253-d627-4895-82ce-a9bf734f5d2b">
-    <img src="https://img.youtube.com/vi/VIDEO_ID/0.jpg" alt="Watch the video" style="width:80%;height:auto;">
+    <img src="resources/images/background_menu.jpg" alt="Watch the video" style="width:80%;height:auto;">
   </a>
 </p>
 
